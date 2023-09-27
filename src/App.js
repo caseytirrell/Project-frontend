@@ -1,6 +1,9 @@
 import React, { useEffect, useState} from 'react';
 import axios from 'axios';
 import './project.css'
+import MoviePage from './moviepage';
+import {BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 
 let hCheck = 'http://localhost:3001/health-check';
@@ -52,6 +55,7 @@ const ToolTip = ({ hoveredMovie, hoveredActor, actorTopMovies }) => {
               <li key={index}>{movie.title} (Rented {movie.rental_count} times)</li>
               ))}
           </ul>
+          <p></p>
         </div>
         );
       }
@@ -127,14 +131,35 @@ function Project() {
     setShowTop5Actors(!showTop5Actors);
   }
 
+  const style = {
+    fontFamily: 'stencil, fantasy',
+    backgroundColor: 'lightgreen',
+    color: 'crimson',
+    padding: '15px',
+    textAlign: 'center',
+    fontSize: '25px',
+    textDecoration: 'overline'
+  };
+
+  const bStyle = {
+    fontFamily: 'stencil, fantasy',
+    backgroundColor: 'crimson',
+    color: 'white',
+    fontSize: '12px',
+    padding: '10px 20px',
+    margin: '5px',
+    cursor: 'pointer',
+    border: 'none',
+    borderRadius: '5px'
+  };
   
   return (
     <div className="Project" style ={{fontFamily: 'Arial, san-serif'}}>
       <ToolTip hoveredMovie = {hoveredMovie} hoveredActor = {hoveredActor} actorTopMovies = {actorTopMovies}/>
-      <header className="Project-Header" style = {{backgroundColor: 'lightgrey', padding: '20px', textAlign: 'center' }}>
-        <h1>Home Page</h1>
-          <button onClick={handleShowTop5Movies}>Show Top 5 Rented Movies</button>
-          <button onClick={handleShowTop5Actors}>Show Top 5 Rented Actors</button>
+      <header className="Project-Header" style = {style}>
+        <h1>Home</h1>
+          <button style = {bStyle} onClick={handleShowTop5Movies}>Show Top 5 Rented Movies</button>
+          <button style = {bStyle} onClick={handleShowTop5Actors}>Show Top 5 Rented Actors</button>
             {showTop5Movies && (
               <>
                 <h2> Top 5 Rented Movies</h2>
@@ -205,5 +230,51 @@ function Project() {
   );
 }
 
+const Navigation = () => {
 
-export default Project;
+  const navigate = useNavigate();
+
+  const style = {
+    fontFamily: 'stencil, fantasy',
+    backgroundColor: 'lightgreen',
+    color: 'white',
+    padding: '15px',
+    textAlign: 'center'
+  };
+
+  const bStyle = {
+    fontFamily: 'stencil, fantasy',
+    backgroundColor: 'crimson',
+    color: 'white',
+    fontSize: '18px',
+    padding: '10px 20px',
+    margin: '5px',
+    cursor: 'pointer',
+    border: 'none',
+    borderRadius: '5px'
+  };
+
+  return (
+    <nav style = {style}>
+          <button style = {bStyle} onClick={() => navigate("/")}>Home</button>
+          <button style = {bStyle} onClick={() => navigate("/moviepage")}>Movies</button>
+    </nav>
+  );
+};
+
+const App = () => {
+
+  return (
+    <Router>
+      <div>
+        <Navigation />
+        <Routes>
+          <Route path="/" element={<Project />} />
+          <Route path="/moviepage" element={<MoviePage />} />
+        </Routes>
+      </div>
+    </Router>
+  );
+};
+
+export default App;
