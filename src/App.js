@@ -2,6 +2,7 @@ import React, { useEffect, useState} from 'react';
 import axios from 'axios';
 import './project.css'
 import MoviePage from './moviepage';
+import CustomerPage from './customerpage'
 import {BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
@@ -13,54 +14,47 @@ let top5ActorsURL = 'http://localhost:3001/top-5-rented-actors';
 
 const ToolTip = ({ hoveredMovie, hoveredActor, actorTopMovies }) => {
 
-    if(hoveredMovie) {
+  const style = {
+    fontFamily: 'stencil, fantasy',
+    position: 'fixed',
+    top: '50%',
+    left: '90%',
+    transform: 'translate(-50%, -50%)',
+    color: 'lightgreen',
+    backgroundColor: 'crimson',
+    border: '1px solid #ccc',
+    padding: '10px',
+    zIndex: 1
+  };
+
+  if(hoveredMovie) {
       
-      return (
+    return (
     
-        <div style = {{
-          position: 'fixed',
-          top: '50%',
-          left: '90%',
-          transform: 'translate(-50%, -50%)',
-          color: 'white',
-          backgroundColor: 'black',
-          border: '1px solid #ccc',
-          padding: '10px',
-          zIndex: 1
-        }}>
-          <h4>{hoveredMovie.title}</h4>
-          <p>{`Rented: ${hoveredMovie.rental_count} times`}</p>
-          <p>{`Genre: ${hoveredMovie.genre}`}</p>
-        </div>
+      <div style = {style}>
+        <h4>{hoveredMovie.title}</h4>
+        <p>{`Rented: ${hoveredMovie.rental_count} times`}</p>
+        <p>{`Genre: ${hoveredMovie.genre}`}</p>
+      </div>
       );
-    }
-    if(hoveredActor) {
+  };
+  if(hoveredActor) {
 
-      return (
+    return (
 
-        <div style = {{
-          position: 'fixed',
-          top: '50%',
-          left: '90%',
-          transform: 'translate(-50%, -50%)',
-          color: 'white',
-          backgroundColor: 'black',
-          border: '1px solid #ccc',
-          padding: '10px',
-          zIndex: 1
-        }}>
-          <h4>{hoveredActor.first_name} {hoveredActor.last_name}</h4>
-          <ul>
-            {actorTopMovies.map((movie, index) => (
-              <li key={index}>{movie.title} (Rented {movie.rental_count} times)</li>
-              ))}
-          </ul>
-          <p></p>
-        </div>
-        );
-      }
-      return null;
-    }
+      <div style = {style}>
+        <h4>{hoveredActor.first_name} {hoveredActor.last_name}</h4>
+        <ul>
+          {actorTopMovies.map((movie, index) => (
+            <li key={index}>{movie.title} (Rented {movie.rental_count} times)</li>
+          ))}
+        </ul>
+        <p></p>
+      </div>
+    );
+  }
+  return null;
+};
 
 function Project() {
 
@@ -124,12 +118,12 @@ function Project() {
   const handleShowTop5Movies = () => {
 
     setShowTop5Movies(!showTop5Movies);
-  }
+  };
 
   const handleShowTop5Actors = () => {
 
     setShowTop5Actors(!showTop5Actors);
-  }
+  };
 
   const style = {
     fontFamily: 'stencil, fantasy',
@@ -138,7 +132,6 @@ function Project() {
     padding: '15px',
     textAlign: 'center',
     fontSize: '25px',
-    textDecoration: 'overline'
   };
 
   const bStyle = {
@@ -146,18 +139,22 @@ function Project() {
     backgroundColor: 'crimson',
     color: 'white',
     fontSize: '12px',
-    padding: '10px 20px',
-    margin: '5px',
+    padding: '5px 10px',
+    margin: '10px',
     cursor: 'pointer',
     border: 'none',
     borderRadius: '5px'
   };
+
+  const overlineText = {
+    textDecoration: 'overline'
+  };
   
   return (
-    <div className="Project" style ={{fontFamily: 'Arial, san-serif'}}>
+    <div className="Project">
       <ToolTip hoveredMovie = {hoveredMovie} hoveredActor = {hoveredActor} actorTopMovies = {actorTopMovies}/>
       <header className="Project-Header" style = {style}>
-        <h1>Home</h1>
+        <h1 style = {overlineText}>Home</h1>
           <button style = {bStyle} onClick={handleShowTop5Movies}>Show Top 5 Rented Movies</button>
           <button style = {bStyle} onClick={handleShowTop5Actors}>Show Top 5 Rented Actors</button>
             {showTop5Movies && (
@@ -246,18 +243,20 @@ const Navigation = () => {
     fontFamily: 'stencil, fantasy',
     backgroundColor: 'crimson',
     color: 'white',
-    fontSize: '18px',
-    padding: '10px 20px',
+    fontSize: '20px',
+    padding: '8px 15px',
     margin: '5px',
     cursor: 'pointer',
     border: 'none',
-    borderRadius: '5px'
+    borderRadius: '5px',
+    textDecoration: 'underline'
   };
 
   return (
     <nav style = {style}>
           <button style = {bStyle} onClick={() => navigate("/")}>Home</button>
           <button style = {bStyle} onClick={() => navigate("/moviepage")}>Movies</button>
+          <button style = {bStyle} onClick={() => navigate("/customerpage")}>Customer Info</button>
     </nav>
   );
 };
@@ -271,6 +270,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Project />} />
           <Route path="/moviepage" element={<MoviePage />} />
+          <Route path="/customerpage" element={<CustomerPage />} />
         </Routes>
       </div>
     </Router>
