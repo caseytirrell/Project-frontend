@@ -1,5 +1,48 @@
 import React, {useEffect, useState} from 'react';
 import axios from 'axios';
+import Modal from 'react-modal';
+
+const RentalModal = ({ isOpen, onRequestClose, onRent, filmId }) => {
+
+	const [customerId, setCustomerId] = useState('');
+	const [staffId, setStaffId] = useState('');
+
+	const handle = () => {
+
+		if(!isNaN(customerId) && !isNaN(staffId)) {
+			onRent(filmId, Number(customerId), Number(staffId));
+			onRequestClose();
+		}
+		else {
+			console.error("Both Customer ID and Staff ID must be valid");
+		}
+		
+	};
+
+	return (
+		<Modal isOpen={isOpen} onRequestClose={onRequestClose}>
+			<h2>Rent Movie</h2>
+			<label>
+				Customer ID:
+				<input
+					type="text" 
+					value={customerId || ''} 
+					onChange={(e) => setCustomerId(Number(e.target.value))} 
+				/>
+			</label>
+			<label>
+				Staff ID:
+				<input
+					type="text"
+					value={staffId || ''}
+					onChange={(e) => setStaffId(Number(e.target.value))}
+				/>
+			</label>
+			<button onClick={handle}>Rent</button>
+			<button onClick={onRequestClose}>Cancel</button>
+		</Modal>
+	);
+};
 
 const MoviePage = () => {
 
@@ -10,18 +53,48 @@ const MoviePage = () => {
 		genre: ''
 	});
 
+	const [modal, setModal] = useState(false);
+	const [film, setFilm] = useState(null);
+
 	const handleSearch = () => {
 
 		axios.get('http://localhost:3001/search-movies', {
 		params: search
 		})
 		.then(response => {
-			console.log(response.data);
+			console.log('Server response:', response.data);
 			setMovies(response.data);
 		})
 		.catch(error => {
 			console.error("Data Error...", error);
 		});
+	};
+
+	const handleRent = (filmId, customerId, staffId) => {
+
+		axios.post('http://localhost:3001/movie-rentals', {
+
+			customerId: customerId,
+			filmId: filmId,
+			staffId: staffId
+		})
+		.then(response => {
+			console.log(response.data);
+			setModal(false);
+		})
+		.catch(error => {
+			console.error("Data Error...", error);
+		});
+	
+	};
+
+	const openModal = (filmId) => {
+		setFilm(filmId);
+		setModal(true);
+	};
+
+	const closeModal = () => {
+		setModal(false);
 	};
 
 	const style = {
@@ -107,8 +180,15 @@ const MoviePage = () => {
 					<p>Released: {movie.release_year}</p>
 					<p>Rating: {movie.rating}</p>
 					<p>Length: {movie.length} Minutes</p>
+					<button style = {bStyle} onClick={() => openModal(movie.film_id)}>Rent Movie</button>
 				</div>
 			))}
+			{modal && <RentalModal
+				isOpen={modal}
+				onRequestClose={closeModal}
+				onRent={handleRent}
+				filmId={film}
+			/>}
 		</div>
 	);
 };
