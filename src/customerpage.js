@@ -1,5 +1,137 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState} from 'react';
 import axios from 'axios';
+import Modal from 'react-modal';
+
+const CustomerModal = ({ isOpen, onRequestClose, onSubmit }) => {
+
+	const [data, setData] = useState({
+		storeId: '',
+		firstName: '',
+		lastName: '',
+		email: '',
+		phone: '',
+		address: '',
+		city: '',
+		district: '',
+		country: ''
+	});
+
+	const handle = (e) => {
+
+		const { name, value } = e.target;
+		setData({
+			...data,
+			[name]: value
+		});
+	};
+
+	const submit = (e) => {
+
+		e.preventDefault();
+		onSubmit(data);
+	};
+
+	return (
+
+		<Modal isOpen={isOpen} onRequestClose={onRequestClose}>
+			<h2>Add New Customer</h2>
+			<form onSubmit={submit}>
+				<label>
+					Store ID:
+					<input
+						type="text" 
+						name="storeId"
+						value={data.storeId} 
+						onChange={handle} 
+					/>
+				</label>
+				<p></p>
+				<label>
+					First Name:
+					<input
+						type="text"
+						name="firstName"
+						value={data.firstName}
+						onChange={handle}
+					/>
+				</label>
+				<p></p>
+				<label>
+					Last Name:
+					<input
+						type="text"
+						name="lastName"
+						value={data.lastName}
+						onChange={handle}
+					/>
+				</label>
+				<p></p>
+				<label>
+					Email Address:
+					<input
+						type="text"
+						name="email"
+						value={data.email}
+						onChange={handle}
+					/>
+				</label>
+				<p></p>
+				<label>
+					Phone:
+					<input
+						type="text"
+						name="phone"
+						value={data.phone}
+						onChange={handle}
+					/>
+				</label>
+				<p></p>
+				<label>
+					Home Address:
+					<input
+						type="text"
+						name="address"
+						value={data.address}
+						onChange={handle}
+					/>
+				</label>
+				<p></p>
+				<label>
+					City:
+					<input
+						type="text"
+						name="city"
+						value={data.city}
+						onChange={handle}
+					/>
+				</label>
+				<p></p>
+				<label>
+					District:
+					<input
+						type="text"
+						name="district"
+						value={data.district}
+						onChange={handle}
+					/>
+				</label>
+				<p></p>
+				<label>
+					Country:
+					<input
+						type="text"
+						name="country"
+						value={data.country}
+						onChange={handle}
+					/>
+				</label>
+				<p></p>
+				<button type="submit">Submit</button>
+			</form>
+			<button onClick={onRequestClose}>Cancel</button>
+		</Modal>
+	);
+};
 
 const ToolTip = ({ hoveredCustomer, customerRentals, isToolTipOut }) => {
 
@@ -59,6 +191,9 @@ const CustomerPage = () => {
 	const [hoveredCustomer, setHoveredCustomer] = useState(null);
 	const [customerRentals, setCustomerRentals] = useState([]);
 
+	const [modal, setModal] = useState(false);
+	const [newCustomers, setNewCustomers] = useState([]);
+
 	const toggleToolTip = (customer) => {
 
 		if(isToolTipOut && hoveredCustomer && hoveredCustomer.customer_id === customer.customer_id) {
@@ -73,28 +208,7 @@ const CustomerPage = () => {
 		}
 	};
 
-	const timeOut = useRef(null);
-
-	const handleMouseE = (customer) => {
-
-		clearTimeout(timeOut.current);
-		setHoveredCustomer(customer);
-	};
-
-	const handleMouseL = () => {
-
-		timeOut.current = setTimeout(() => {
-			setHoveredCustomer(null);
-		}, 10000);
-	};
-
-	useEffect(() => {
-
-		return () => {
-
-			clearTimeout(timeOut.current);
-		};
-	}, []);
+	
 
 	useEffect(() => {
 
@@ -145,6 +259,23 @@ const CustomerPage = () => {
 			});
 		}
 	};
+
+	const openModal = () => setModal(true);
+	const closeModal = () => setModal(false);
+
+	const handleSubmit = (customerData) => {
+
+		axios.post('http://localhost:3001/new-customer', customerData)
+		.then(response => {
+
+			console.log(response.data);
+			setNewCustomers([...newCustomers, response.data]);
+			closeModal();
+		})
+		.catch(error => {
+			console.error("Data Error...", error);
+		});
+	}
 
 	const style = {
 
@@ -216,7 +347,10 @@ const CustomerPage = () => {
 				/>
 				<button style = {bStyle} onClick={handleSearch}>Search</button>
 				<p></p>
+				<button style = {bStyle} onClick={openModal}>Add New Customer</button>
+				<p></p>
 				<button style = {bStyle} onClick={allCustomers}>Show All Customers</button>
+				{modal && <CustomerModal isOpen={modal} onRequestClose={closeModal} onSubmit={handleSubmit} />}
 				{showCustomers && (
 
 					<h1 style = {lStyle}>Customers</h1>
