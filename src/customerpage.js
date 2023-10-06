@@ -208,8 +208,6 @@ const CustomerPage = () => {
 		}
 	};
 
-	
-
 	useEffect(() => {
 
 		if(hoveredCustomer) {
@@ -276,6 +274,19 @@ const CustomerPage = () => {
 			console.error("Data Error...", error);
 		});
 	}
+
+	const handleDelete = (customerId) => {
+
+		axios.delete(`http://localhost:3001/delete-customer/${customerId}`)
+		.then(response => {
+			console.log(response.data);
+			const updateCustomers = customers.filter(c => c.customer_id !== customerId);
+			setCustomers(updateCustomers);
+		})
+		.catch(error => {
+			console.error("Deletion Error...", error);
+		});
+	};
 
 	const style = {
 
@@ -360,12 +371,13 @@ const CustomerPage = () => {
 					<div 
 						style = {lStyle} 
 						key={customer.customer_id}
-						onClick={() => toggleToolTip(customer)}
 					>
 						<h3 style = {overlineText}>{customer.first_name} {customer.last_name}</h3>
 						<p>Email: {customer.email}</p>
 						<p>Customer ID: {customer.customer_id}</p>
 						<p>Status: {customer.active ? 'Active' : 'Inactive'}</p>
+						<button style = {bStyle} onClick={() => toggleToolTip(customer)}>Show Details</button>
+						<button style = {bStyle} onClick={() => handleDelete(customer.customer_id)}>Delete Customer</button>
 					</div>
 				)))}
 		</div>
