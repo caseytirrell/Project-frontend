@@ -133,6 +133,131 @@ const CustomerModal = ({ isOpen, onRequestClose, onSubmit }) => {
 	);
 };
 
+const EditCustomerModal = ({ isOpen, onRequestClose, onSubmit, initialData}) => {
+
+	const [data, setData] = useState(initialData);
+
+	useEffect(() => {
+		setData(initialData);
+	}, [initialData]);
+
+	const handle = (e) => {
+
+		const { name, value } = e.target;
+		setData({
+			...data,
+			[name]: value
+		});
+	};
+
+	const submit = (e) => {
+
+		e.preventDefault();
+		onSubmit(data);
+	}
+
+	return (
+
+		<Modal isOpen={isOpen} onRequestClose={onRequestClose}>
+			<h2>Edit Customer Information</h2>
+			<form onSubmit={submit}>
+				<label>
+					Store ID:
+					<input
+						type="text" 
+						name="storeId"
+						value={data.storeId} 
+						onChange={handle} 
+					/>
+				</label>
+				<p></p>
+				<label>
+					First Name:
+					<input
+						type="text"
+						name="firstName"
+						value={data.firstName}
+						onChange={handle}
+					/>
+				</label>
+				<p></p>
+				<label>
+					Last Name:
+					<input
+						type="text"
+						name="lastName"
+						value={data.lastName}
+						onChange={handle}
+					/>
+				</label>
+				<p></p>
+				<label>
+					Email Address:
+					<input
+						type="text"
+						name="email"
+						value={data.email}
+						onChange={handle}
+					/>
+				</label>
+				<p></p>
+				<label>
+					Phone:
+					<input
+						type="text"
+						name="phone"
+						value={data.phone}
+						onChange={handle}
+					/>
+				</label>
+				<p></p>
+				<label>
+					Home Address:
+					<input
+						type="text"
+						name="address"
+						value={data.address}
+						onChange={handle}
+					/>
+				</label>
+				<p></p>
+				<label>
+					City:
+					<input
+						type="text"
+						name="city"
+						value={data.city}
+						onChange={handle}
+					/>
+				</label>
+				<p></p>
+				<label>
+					District:
+					<input
+						type="text"
+						name="district"
+						value={data.district}
+						onChange={handle}
+					/>
+				</label>
+				<p></p>
+				<label>
+					Country:
+					<input
+						type="text"
+						name="country"
+						value={data.country}
+						onChange={handle}
+					/>
+				</label>
+				<p></p>
+				<button type="submit">Submit</button>
+			</form>
+			<button onClick={onRequestClose}>Cancel</button>
+		</Modal>
+	);
+}
+
 const ToolTip = ({ hoveredCustomer, customerRentals, isToolTipOut }) => {
 
 	const style = {
@@ -193,6 +318,9 @@ const CustomerPage = () => {
 
 	const [modal, setModal] = useState(false);
 	const [newCustomers, setNewCustomers] = useState([]);
+
+	const [editModal, setEditModal] = useState(false);
+    const [selectedCustomer, setSelectedCustomer] = useState(null);
 
 	const toggleToolTip = (customer) => {
 
@@ -258,8 +386,47 @@ const CustomerPage = () => {
 		}
 	};
 
+	const openEditModal = (customer) => {
+		setSelectedCustomer({
+			customer_id: customer.customer_id,
+			storeId: customer.storeId,
+			firstName: customer.firstName,
+			lastName: customer.lastName,
+			email: customer.email,
+			phone: customer.phone,
+			address: customer.address,
+			city: customer.city,
+			district: customer.district,
+			country: customer.country
+
+		});
+		setEditModal(true);
+	}
+
 	const openModal = () => setModal(true);
 	const closeModal = () => setModal(false);
+
+	const closeEditModal = () => setEditModal(false);
+
+	const handleEditSubmit = (customerId, updatedData) => {
+
+		console.log("Submitting with customerId:", customerId);
+    	console.log("Updated Data:", updatedData);
+		axios.put(`http://localhost:3001/update-customer/${customerId}`, updatedData)
+		.then(response => {
+			console.log(response.data);
+			const updateIndex = customers.findIndex(c => c.customer_id === customerId);
+			if(updateIndex !== -1) {
+				const uCustomers = [...customers];
+				uCustomers[updateIndex] = response.data;
+				setCustomers(uCustomers);
+			}
+			closeEditModal();
+		})
+		.catch(error => {
+			console.error("Data Error...", error);
+		});
+	};
 
 	const handleSubmit = (customerData) => {
 
@@ -361,11 +528,20 @@ const CustomerPage = () => {
 				<button style = {bStyle} onClick={openModal}>Add New Customer</button>
 				<p></p>
 				<button style = {bStyle} onClick={allCustomers}>Show All Customers</button>
-				{modal && <CustomerModal isOpen={modal} onRequestClose={closeModal} onSubmit={handleSubmit} />}
+				
+				{modal && (
+					<CustomerModal 
+						isOpen={modal} 
+						onRequestClose={closeModal} 
+						onSubmit={handleSubmit} 
+					/>
+				)}
+
 				{showCustomers && (
 
 					<h1 style = {lStyle}>Customers</h1>
 				)}
+
 				{showCustomers && (
 				customers.map((customer, index) => (
 					<div 
@@ -376,9 +552,20 @@ const CustomerPage = () => {
 						<p>Email: {customer.email}</p>
 						<p>Customer ID: {customer.customer_id}</p>
 						<p>Status: {customer.active ? 'Active' : 'Inactive'}</p>
+						<button style={bStyle} onClick={() => openEditModal(customer)}>Edit Customer</button>
 						<button style = {bStyle} onClick={() => toggleToolTip(customer)}>Show Details</button>
 						<button style = {bStyle} onClick={() => handleDelete(customer.customer_id)}>Delete Customer</button>
 					</div>
+				)))}
+			
+				{editModal && (
+				customers.map((customer, index) => (
+					<EditCustomerModal 
+						isOpen={editModal} 
+						onRequestClose={closeEditModal} 
+						onSubmit={(updatedData) => handleEditSubmit(selectedCustomer.customer_id, updatedData)} 
+						initialData={selectedCustomer} 
+					/>
 				)))}
 		</div>
 	);
