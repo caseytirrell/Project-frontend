@@ -2,6 +2,90 @@ import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import Modal from 'react-modal';
 
+const CustomerModal = ({ isOpen, onRequestClose, customers, currentFilmId}) => {
+
+	console.log('Customer Prop:', customers);
+
+	const handleReturn = (customerId, filmId) => {
+
+		axios.post('http://localhost:3001/return-movie', { 
+			customerId, 
+			filmId
+		})
+		.then(response => {
+			console.log('Server response:', response.data);
+		})
+		.catch(error => {
+			console.error("Data Error...", error);
+		});
+	};
+
+	const style = {
+
+	    fontFamily: 'stencil, fantasy',
+    	backgroundColor: 'lightgreen',
+    	color: 'crimson',
+    	padding: '15px',
+    	textAlign: 'center',
+    	fontSize: '25px',
+	};
+
+	const bStyle = {
+    	fontFamily: 'stencil, fantasy',
+    	backgroundColor: 'crimson',
+    	color: 'white',
+    	fontSize: '15px',
+    	padding: '5px 10px',
+    	margin: '10px',
+    	cursor: 'pointer',
+    	border: 'none',
+    	borderRadius: '5px'
+  	};
+
+	const sStyle = {
+
+   		fontFamily: 'stencil, fantasy',
+   		backgroundColor: 'white',
+   		color: 'crimson',
+   		fontSize: '18px',
+   		padding: '5px 10px',
+   		margin: '8px',
+   		cursor: 'pointer',
+   		border: 'none',
+   		borderRadius: '5px'
+	};
+
+	const lStyle = {
+
+    		fontFamily: 'stencil, fantasy',
+    		backgroundColor: 'white',
+   			color: 'crimson',
+   			padding: '15px',
+   			textAlign: 'center'	
+	};
+
+	const overlineText = {
+		textDecoration: 'overline'
+	}
+
+	return (
+		<Modal isOpen={isOpen} onRequestClose={onRequestClose}>
+			<h2 style = {style}>Customers Renting This Movie</h2>
+			<ul style = {sStyle}>
+				{customers.map((customer, index) => (
+					<li key={index}>
+						{customer.first_name} {customer.last_name}
+						<button style = {bStyle} onClick={() => handleReturn(customer.customer_id, currentFilmId)}>
+							Return Movie
+						</button>
+					</li>
+				))}
+			</ul>
+			<button style = {bStyle} onClick={onRequestClose}>Close</button>
+		</Modal>
+	);
+};
+
 const RentalModal = ({ isOpen, onRequestClose, onRent, filmId }) => {
 
 	const [customerId, setCustomerId] = useState('');
@@ -56,6 +140,11 @@ const MoviePage = () => {
 	const [modal, setModal] = useState(false);
 	const [film, setFilm] = useState(null);
 
+	const [customerModal, setCustomerModal] = useState(false);
+	const [currentCustomers, setCurrentCustomers] = useState([]);
+
+	const [currentFilmId, setCurrentFilmId] = useState(null);
+
 	const handleSearch = () => {
 
 		axios.get('http://localhost:3001/search-movies', {
@@ -72,11 +161,16 @@ const MoviePage = () => {
 
 	const handleRent = (filmId, customerId, staffId) => {
 
+		console.log(filmId);
 		axios.post('http://localhost:3001/movie-rentals', {
 
 			customerId: customerId,
 			filmId: filmId,
 			staffId: staffId
+		}, {
+			headers: {
+				'Content-Type': 'application/json'
+			}
 		})
 		.then(response => {
 			console.log(response.data);
@@ -86,6 +180,19 @@ const MoviePage = () => {
 			console.error("Data Error...", error);
 		});
 	
+	};
+
+	const handleShowCustomers = (filmId) => {
+		axios.get(`http://localhost:3001/current-rentals/${filmId}`)
+		.then(response => {
+			console.log('Attempting to open CustomerModal')
+			setCurrentCustomers(response.data);
+			setCurrentFilmId(filmId);
+			setCustomerModal(true);
+		})
+		.catch(error => {
+			console.error("Data Error...", error);
+		});
 	};
 
 	const openModal = (filmId) => {
@@ -181,6 +288,7 @@ const MoviePage = () => {
 					<p>Rating: {movie.rating}</p>
 					<p>Length: {movie.length} Minutes</p>
 					<button style = {bStyle} onClick={() => openModal(movie.film_id)}>Rent Movie</button>
+					<button style = {bStyle} onClick={() => handleShowCustomers(movie.film_id)}>Show Customers</button>
 				</div>
 			))}
 			{modal && <RentalModal
@@ -188,6 +296,14 @@ const MoviePage = () => {
 				onRequestClose={closeModal}
 				onRent={handleRent}
 				filmId={film}
+			/>}
+			{console.log('customerModal state:', customerModal)}
+			{console.log('currentCustomers state:', currentCustomers)}
+			{customerModal && <CustomerModal
+				isOpen={customerModal}
+				onRequestClose={() => setCustomerModal(false)}
+				customers={currentCustomers}
+				currentFilmId={currentFilmId}
 			/>}
 		</div>
 	);
