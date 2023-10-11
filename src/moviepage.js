@@ -4,8 +4,6 @@ import Modal from 'react-modal';
 
 const CustomerModal = ({ isOpen, onRequestClose, customers, currentFilmId}) => {
 
-	console.log('Customer Prop:', customers);
-
 	const handleReturn = (customerId, filmId) => {
 
 		axios.post('http://localhost:3001/return-movie', { 
@@ -14,9 +12,11 @@ const CustomerModal = ({ isOpen, onRequestClose, customers, currentFilmId}) => {
 		})
 		.then(response => {
 			console.log('Server response:', response.data);
+			window.alert('Movie returned successfully...');
 		})
 		.catch(error => {
 			console.error("Data Error...", error);
+			window.alert('Error in returning movie...');
 		});
 	};
 

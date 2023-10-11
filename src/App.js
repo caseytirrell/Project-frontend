@@ -5,12 +5,11 @@ import MoviePage from './moviepage';
 import CustomerPage from './customerpage'
 import {BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import pdfMake from "pdfmake/build/pdfmake";
+import pdfFonts from "pdfmake/build/vfs_fonts";
 
 
-let hCheck = 'http://localhost:3001/health-check';
-
-let top5MoviesURL = 'http://localhost:3001/top-5-rented-movies';
-let top5ActorsURL = 'http://localhost:3001/top-5-rented-actors';
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 const ToolTip = ({ hoveredMovie, hoveredActor, actorTopMovies }) => {
 
@@ -70,7 +69,7 @@ function Project() {
   const [actorTopMovies, setActorTopMovies] = useState([]);
 
   useEffect(() => {
-    axios.get(hCheck)
+    axios.get('http://localhost:3001/health-check')
       .then(response => {
         updatehCheck(response.data);
       })
@@ -81,7 +80,7 @@ function Project() {
   }, []);
 
   useEffect(() => {
-    axios.get(top5MoviesURL)
+    axios.get('http://localhost:3001/top-5-rented-movies')
     .then(response => {
       console.log(response.data);
       setTop5Movies(response.data);
@@ -92,7 +91,7 @@ function Project() {
   }, []);
 
   useEffect(() => {
-    axios.get(top5ActorsURL)
+    axios.get('http://localhost:3001/top-5-rented-actors')
     .then(response => {
       console.log(response.data);
       setTop5Actors(response.data);
@@ -124,6 +123,7 @@ function Project() {
 
     setShowTop5Actors(!showTop5Actors);
   };
+
 
   const style = {
     fontFamily: 'stencil, fantasy',
@@ -175,13 +175,12 @@ function Project() {
                   </thead>
                   <tbody>
                     {top5Movies.map((movie, index) => (
-                      <tr key={index}>
-                        <td 
+                      <tr 
+                        key={index}
                         onMouseEnter={() => setHoveredMovie(movie)}
                         onMouseLeave={() => setHoveredMovie(null)}
-                        >
-                          {movie.title}
-                        </td>
+                      >
+                        <td>{movie.title}</td>
                         <td>{movie.rental_count} times</td>
                       </tr>
                     ))}
@@ -231,6 +230,26 @@ const Navigation = () => {
 
   const navigate = useNavigate();
 
+  const generatePDF = () => {
+
+    axios({
+      method: 'get',
+      url: 'http://localhost:3001/generate-customer-report',
+      responseType: 'blob'
+    })
+    .then(response => {
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'customer_rental_report.pdf');
+      document.body.appendChild(link);
+      link.click();
+    })
+    .catch(error => {
+      console.error("Data Error...", error);
+    })
+  };
+
   const style = {
     fontFamily: 'stencil, fantasy',
     backgroundColor: 'lightgreen',
@@ -257,6 +276,7 @@ const Navigation = () => {
           <button style = {bStyle} onClick={() => navigate("/")}>Home</button>
           <button style = {bStyle} onClick={() => navigate("/moviepage")}>Movies</button>
           <button style = {bStyle} onClick={() => navigate("/customerpage")}>Customer Info</button>
+          <button style = {bStyle} onClick={generatePDF}>Generate Customer Rental Report</button>
     </nav>
   );
 };
