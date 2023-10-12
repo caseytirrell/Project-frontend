@@ -442,9 +442,11 @@ const CustomerPage = () => {
 		});
 	}
 
-	const handleDelete = (customerId) => {
+	const handleDeleteCustomer = (customerId) => {
 
-		axios.delete(`http://localhost:3001/delete-customer/${customerId}`)
+		axios.delete('http://localhost:3001/delete-customer', {
+			data: {customer_id: customerId}
+		})
 		.then(response => {
 			console.log(response.data);
 			const updateCustomers = customers.filter(c => c.customer_id !== customerId);
@@ -554,7 +556,7 @@ const CustomerPage = () => {
 						<p>Status: {customer.active ? 'Active' : 'Inactive'}</p>
 						<button style={bStyle} onClick={() => openEditModal(customer)}>Edit Customer</button>
 						<button style = {bStyle} onClick={() => toggleToolTip(customer)}>Show Details</button>
-						<button style = {bStyle} onClick={() => handleDelete(customer.customer_id)}>Delete Customer</button>
+						<button style = {bStyle} onClick={() => handleDeleteCustomer(customer.customer_id)}>Delete Customer</button>
 					</div>
 				)))}
 			
