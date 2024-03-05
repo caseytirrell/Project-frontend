@@ -9,46 +9,51 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject var viewModel: AuthViewModel
+    
     var body: some View {
         NavigationView {
-            NavigationLink(destination: LoginView()) {
-                        ZStack {
-                            Color.green
-                                .ignoresSafeArea()
-
-                            Image("HomePage")
-                                .resizable(resizingMode: .stretch)
-                                .ignoresSafeArea()
-
-                            VStack {
-                                Text("The Golf Scorecard")
-                                    .font(.custom("Inter Regular", size: 32))
-                                    .foregroundColor(Color.white)
-                                    .multilineTextAlignment(.center)
-                                    .shadow(color: .black, radius: 1)
+            // Conditionally show content based on authentication status
+            if viewModel.isAuthenticated {
+                HomePageView()
+            }
+            else {
+                ZStack {
+                    Color.green.ignoresSafeArea()
+                    Image("HomePage").resizable(resizingMode: .stretch).ignoresSafeArea()
+                    VStack {
+                        Text("The Golf Scorecard")
+                            .font(.custom("Inter Regular", size: 32))
+                            .foregroundColor(Color.white)
+                            .multilineTextAlignment(.center)
+                            .shadow(color: .black, radius: 1)
+                            .padding()
+                        
+                        Text("The Forefront of Golf Scoring-Where Innovation Drives the Game")
+                            .font(.custom("Nunito-Medium", size: 22))
+                            .foregroundColor(Color.white)
+                            .multilineTextAlignment(.center)
+                            .shadow(color: .black, radius: 3)
+                            .padding()
+                        
+                        // Adjusted to directly present LoginView as needed without redundant NavigationLink
+                        Button(action: {
+                            // Optionally do something before navigating, or just navigate
+                        }) {
+                            NavigationLink(destination: LoginView()) {
+                                Text("Continue")
+                                    .font(.headline)
                                     .padding()
-
-                                Text("The Forefront of Golf Scoring-Where Innovation Drives the Game")
-                                    .font(.custom("Nunito-Medium", size: 22))
-                                    .foregroundColor(Color.white)
-                                    .multilineTextAlignment(.center)
-                                    .shadow(color: .black, radius: 3)
+                                    .background(Color.blue) // Adjusted to provide a background color
+                                    .foregroundColor(.white)
+                                    .shadow(color: .black, radius: 2)
+                                    .cornerRadius(8)
                                     .padding()
-
-                                NavigationLink(destination: LoginView()) {
-                                    Text("Continue")
-                                        .font(.headline)
-                                        .padding()
-                                        .tint(.white)
-                                        .foregroundColor(.white)
-                                        .shadow(color: .black, radius: 2)
-                                        .cornerRadius(8)
-                                        .padding()
-                                }
                             }
                         }
-                        .navigationBarHidden(true)
-                  }
+                    }
+                }
+                .navigationBarHidden(true)
+            }
         }
     }
 }

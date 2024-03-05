@@ -53,7 +53,7 @@ struct RegistrationView: View {
                 .padding(.horizontal)
                 .padding(.top, 12)
             }
-            .frame(height: UIScreen.main.bounds.height - 500)            // log in button
+            .frame(height: UIScreen.main.bounds.height - 400)            // log in button
             Button {
                 Task {
                     try await viewModel.register(withEmail: email, password: password, firstName: firstName, lastName: lastName, phoneNumber: phoneNumber, address1: address1, address2: address2, city: city, state: state, zipCode: zipCode, birthday: birthday)
