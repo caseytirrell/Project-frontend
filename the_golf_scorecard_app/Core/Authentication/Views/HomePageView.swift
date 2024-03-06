@@ -13,7 +13,7 @@ struct HomePageView: View {
         ZStack {
             Color.limeGreen.edgesIgnoringSafeArea(/*@START_MENU_TOKEN@*/.all/*@END_MENU_TOKEN@*/)
             
-            VStack(spacing: 15){
+            VStack(spacing: 15) {
                 Image("golf_logo")
                     .resizable()
                     .scaledToFill()
@@ -28,6 +28,11 @@ struct HomePageView: View {
                     .font(.system(size: 40))
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.bottom, 20)
+                
+                if let userEmail = authViewModel.email {
+                    Text("Logged in as \(userEmail)")
+                        .padding()
+                }
                 
                 Button("Courses") {
                     
@@ -81,7 +86,7 @@ struct HomePageView: View {
                 .padding()
             }
             .padding()
-            .navigationBarTitle("Home", displayMode: .large)
+            //.navigationBarTitle("Home", displayMode: .large)
         }
     }
 }

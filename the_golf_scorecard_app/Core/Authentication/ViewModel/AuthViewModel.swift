@@ -25,6 +25,8 @@ class AuthViewModel: ObservableObject {
             self.userSession = result.user
             
             DispatchQueue.main.async {
+                self.userSession = result.user
+                self.email = result.user.email
                 self.isAuthenticated = true
             }
             print(result.user.uid)
@@ -34,6 +36,57 @@ class AuthViewModel: ObservableObject {
                 self.errorMessage = error.localizedDescription
             }
         }
+    }
+    
+    func fetchIDTokenAndSendUserData() {
+        guard let user = Auth.auth().currentUser else { return }
+        user.getIDTokenForcingRefresh(true) { idToken, error in
+            if let error = error {
+                print("Error fetching ID Token: \(error.localizedDescription)")
+                return
+            }
+            
+            guard let IDToken = idToken else { return }
+            let userData = ["email": user.email, "uid": user.uid]
+        
+            self.sendUserDataToBackend(userData: userData, idToken: IDToken)
+        }
+    }
+    
+    func sendUserDataToBackend(userData: [String: Any?], idToken: String) {
+        //Not Sure what the correct api ending
+        let urlString = "https://localhost:5005/api-docs/userData/.../"
+        guard let url =  URL(string: urlString) else { return }
+        var urlRequest = URLRequest(url: url)
+        urlRequest.httpMethod = "POST"
+        urlRequest.addValue("Bearer \(idToken)", forHTTPHeaderField: "Authorization")
+        urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        do {
+            let JSONData = try JSONSerialization.data(withJSONObject: userData, options: [])
+            urlRequest.httpBody = JSONData
+            
+            let task = URLSession.shared.dataTask(with: urlRequest) { data, response, error in
+                if let error = error {
+                    print("Error sending user data to backend: \(error.localizedDescription)")
+                    return
+                }
+                if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
+                    print("User data and ID token successfully sent backend.")
+                }
+                else {
+                    print("Server side error/unexpected status code")
+                }
+            }
+            task.resume()
+        }
+        catch {
+            print("Error serializing user data: \(error.localizedDescription)")
+            return
+        }
+        
+        
+        
     }
     
     func register(withEmail email: String, password: String, firstName: String, lastName:String, phoneNumber: String, address1: String, address2: String, city: String, state: String, zipCode: String, birthday: String) async throws {

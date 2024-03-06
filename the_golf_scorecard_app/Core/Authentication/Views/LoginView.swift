@@ -19,13 +19,14 @@ struct LoginView: View {
                                     InputView(text: $email, title: "Email Address", placeholder: "yourname@example.com")
                                         .autocapitalization(.none)
                                     
-                                    InputView(text: $password, title: "Passowrd", placeholder: "Enter Password", isSecureFiled: true)
+                                    InputView(text: $password, title: "Password", placeholder: "Enter Password", isSecureFiled: true)
                                 }
                                 .padding(.all, 24)
                                 // log in button
                                 Button {
                                     Task {
                                         try await viewModel.logIn(withEmail: email, password: password)
+                                        viewModel.fetchIDTokenAndSendUserData()
                                     }
                                 } label: {
                                     HStack {
