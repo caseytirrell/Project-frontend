@@ -9,17 +9,17 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject var viewModel: AuthViewModel
+    @State private var isActive = false
     
     var body: some View {
         NavigationView {
-            // Conditionally show content based on authentication status
             if viewModel.isAuthenticated {
                 HomePageView()
-            }
-            else {
+            } else {
                 ZStack {
                     Color.green.ignoresSafeArea()
                     Image("HomePage").resizable(resizingMode: .stretch).ignoresSafeArea()
+                    
                     VStack {
                         Text("The Golf Scorecard")
                             .font(.custom("Inter Regular", size: 32))
@@ -35,29 +35,27 @@ struct ContentView: View {
                             .shadow(color: .black, radius: 3)
                             .padding()
                         
-                        // Adjusted to directly present LoginView as needed without redundant NavigationLink
-                        Button(action: {
-                            // Optionally do something before navigating, or just navigate
-                        }) {
-                            NavigationLink(destination: LoginView()) {
-                                Text("Continue")
-                                    .font(.headline)
-                                    .padding()
-                                    .background(Color.blue) // Adjusted to provide a background color
-                                    .foregroundColor(.white)
-                                    .shadow(color: .black, radius: 2)
-                                    .cornerRadius(8)
-                                    .padding()
-                            }
-                        }
+                        Text("Touch Anywhere...")
+                            .font(.custom("Nunito-Medium", size: 10))
+                            .foregroundColor(Color.white)
+                            .multilineTextAlignment(.center)
+                            .shadow(color: .black, radius: 3)
+                            .padding()
                     }
+
+                    NavigationLink(destination: LoginView(), isActive: $isActive) { EmptyView() }
                 }
                 .navigationBarHidden(true)
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    self.isActive = true
+                }
             }
         }
     }
 }
 
 #Preview {
-    ContentView()
+    ContentView().environmentObject(AuthViewModel())
 }
+

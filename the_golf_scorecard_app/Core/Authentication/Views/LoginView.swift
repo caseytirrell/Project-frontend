@@ -2,7 +2,9 @@ import SwiftUI
 
 struct LoginView: View {
     @State private var email = ""
+    @State private var showEmail = false
     @State private var password = ""
+    @State private var showPassword = false
     @EnvironmentObject var viewModel: AuthViewModel
     var body: some View {
         NavigationStack{
@@ -16,14 +18,20 @@ struct LoginView: View {
                                 
                                 // log in fields
                                 VStack(spacing: 24) {
-                                    InputView(text: $email, title: "Email Address", placeholder: "yourname@example.com")
+                                    InputView(text: $email, title: "Email Address", placeholder: "yourname@example.com", showError: showEmail)
                                         .autocapitalization(.none)
                                     
-                                    InputView(text: $password, title: "Password", placeholder: "Enter Password", isSecureFiled: true)
+                                    InputView(text: $password, title: "Password", placeholder: "Enter Password", isSecureFiled: true, showError: showPassword)
                                 }
                                 .padding(.all, 24)
                                 // log in button
                                 Button {
+                                    
+                                    showEmail = email.isEmpty
+                                    showPassword = password.isEmpty
+                                    
+                                    guard !showEmail && !showPassword else { return }
+                                    
                                     Task {
                                         try await viewModel.logIn(withEmail: email, password: password)
                                         viewModel.fetchIDTokenAndSendUserData()

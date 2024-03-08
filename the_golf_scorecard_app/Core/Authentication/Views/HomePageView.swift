@@ -11,34 +11,37 @@ struct HomePageView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
     var body: some View {
         ZStack {
-            Color.limeGreen.edgesIgnoringSafeArea(/*@START_MENU_TOKEN@*/.all/*@END_MENU_TOKEN@*/)
+            Color.white.edgesIgnoringSafeArea(/*@START_MENU_TOKEN@*/.all/*@END_MENU_TOKEN@*/)
             
             VStack(spacing: 15) {
+                if let userEmail = authViewModel.email {
+                    Text("Logged in as \(userEmail)")
+                        .font(.custom("Inter Regular", size: 12))
+                        .padding(.top, 20)
+                }
+                
                 Image("golf_logo")
                     .resizable()
                     .scaledToFill()
                     .frame(width: 100, height: 120)
-                    .padding(.vertical, 32)
+                    .padding(.top, 20)
+                    .padding(.horizontal, 100)
                 
                 Text("Welcome to")
-                    .font(.system(size: 40))
+                    .font(.custom("Inter Regular", size: 40))
                     .fixedSize(horizontal: false, vertical: true)
                 
                 Text("The Golf Scorecard!")
-                    .font(.system(size: 40))
+                    .font(.custom("Inter Regular", size: 40))
                     .fixedSize(horizontal: false, vertical: true)
-                    .padding(.bottom, 20)
+                    .padding(.bottom, 15)
                 
-                if let userEmail = authViewModel.email {
-                    Text("Logged in as \(userEmail)")
-                        .padding()
-                }
                 
                 Button("Courses") {
                     
                 }
                 .buttonStyle(PrimaryButtonStyle())
-                Button("Register a Tournament") {
+                Button("Register") {
                     
                 }
                 .buttonStyle(PrimaryButtonStyle())
@@ -58,7 +61,6 @@ struct HomePageView: View {
                     
                 }
                 .buttonStyle(PrimaryButtonStyle())
-                Spacer()
                 
                 HStack(spacing: 10) {
                     
@@ -66,10 +68,12 @@ struct HomePageView: View {
                         
                     }) {
                         Text("About Us")
-                            .foregroundColor(.white)
+                            .font(.custom("Inter Regular", size: 20))
+                            .foregroundColor(.black)
                             .padding()
                             .background(Color.orange)
                             .cornerRadius(8)
+                            .frame(width: 200, height: 30)
                     }
                     
                     Button(action: {
@@ -77,10 +81,12 @@ struct HomePageView: View {
                     }) {
                         
                         Text("Logout")
-                            .foregroundColor(.white)
+                            .font(.custom("Inter Regular", size: 20))
+                            .foregroundColor(.black)
                             .padding()
                             .background(Color.red)
                             .cornerRadius(8)
+                            .frame(width: 200, height: 30)
                     }
                 }
                 .padding()
@@ -92,13 +98,14 @@ struct HomePageView: View {
 }
 
 struct PrimaryButtonStyle: ButtonStyle {
-    var foregroundColor: Color = .white
-    var backgroundColor: Color = .blue
-    var height: CGFloat = 44
+    var foregroundColor: Color = .black
+    var backgroundColor: Color = .limeGreen
+    var height: CGFloat = 50
     var width: CGFloat = 200
 
     func makeBody(configuration: Self.Configuration) -> some View {
         configuration.label
+            .font(.custom("Inter Regular", size: 20))
             .foregroundColor(foregroundColor)
             .padding()
             .frame(width: width, height: height)

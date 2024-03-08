@@ -17,9 +17,13 @@ class AuthViewModel: ObservableObject {
     @Published var photoURL: String?
     @Published var isAuthenticated = false
     
+    init() {
+            self.userSession = Auth.auth().currentUser
+        }
     
     func logIn(withEmail email: String, password: String) async throws {
         print("Logging in user ...")
+        print(ProcessInfo.processInfo.environment["DATABASEURL"])
         do {
             let result = try await Auth.auth().signIn(withEmail: email, password: password)
             self.userSession = result.user
@@ -49,48 +53,69 @@ class AuthViewModel: ObservableObject {
             guard let IDToken = idToken else { return }
             let userData = ["email": user.email, "uid": user.uid]
         
-            self.sendUserDataToBackend(userData: userData, idToken: IDToken)
+            Task {
+                await self.sendUserDataToBackend(userData: userData)
+            }
         }
     }
     
-    func sendUserDataToBackend(userData: [String: Any?], idToken: String) {
-        //Not Sure what the correct api ending
-        let urlString = "https://localhost:5005/api-docs/userData/.../"
+    func sendUserDataToBackend(userData: [String: Any?]) async {
+        //Not sure how to 
+        let urlString = "https://localhost:5005/api/v1/users/register"
         guard let url =  URL(string: urlString) else { return }
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "POST"
-        urlRequest.addValue("Bearer \(idToken)", forHTTPHeaderField: "Authorization")
         urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
         do {
             let JSONData = try JSONSerialization.data(withJSONObject: userData, options: [])
             urlRequest.httpBody = JSONData
             
-            let task = URLSession.shared.dataTask(with: urlRequest) { data, response, error in
-                if let error = error {
-                    print("Error sending user data to backend: \(error.localizedDescription)")
-                    return
-                }
-                if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
-                    print("User data and ID token successfully sent backend.")
-                }
-                else {
-                    print("Server side error/unexpected status code")
-                }
+            let (_, response) = try await URLSession.shared.upload(for: urlRequest, from: JSONData)
+            guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+                
+                print("Server error or unexpected status code")
+                return
             }
-            task.resume()
+            print("User data successfulyl sent to backend.")
         }
         catch {
             print("Error serializing user data: \(error.localizedDescription)")
             return
         }
-        
-        
-        
     }
     
     func register(withEmail email: String, password: String, firstName: String, lastName:String, phoneNumber: String, address1: String, address2: String, city: String, state: String, zipCode: String, birthday: String) async throws {
         print("Registering user ... ")
+        do {
+            
+            let authResult = try await Auth.auth().createUser(withEmail: email, password: password)
+            self.userSession = authResult.user
+            
+            let userData: [String: Any] = [
+                
+                "firstName": firstName,
+                "lastName": lastName,
+                "email": email,
+                "password": password,
+                "phoneNumber": phoneNumber,
+                "birthday": birthday,
+                "address1": address1,
+                "address2": address2,
+                "city": city,
+                "state": state,
+                "zipCode": zipCode
+            ]
+            
+            await sendUserDataToBackend(userData: userData)
+        }
+        catch let error {
+            DispatchQueue.main.async {
+                
+                self.errorMessage = error.localizedDescription
+            }
+            throw error
+        }
     }
     
     func signOut() {
@@ -104,8 +129,8 @@ class AuthViewModel: ObservableObject {
         }
         catch let signOutError as NSError {
             DispatchQueue.main.async {
-                self.errorMessage = "Error signing out: signOutError.localizedDescription)"
-                }
+                self.errorMessage = "Error signing out: \(signOutError.localizedDescription)"
             }
         }
+    }
 }
