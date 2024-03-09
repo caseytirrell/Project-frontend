@@ -52,7 +52,7 @@ class AuthViewModel: ObservableObject {
             if let error = error {
                 print("Server Request Failed \(error)")
             } else if let response = response {
-                print("Sever Messase: \(response)")
+                print("Sever Messase: \(String(data: data!, encoding: .utf8))")
             }
         }
         task.resume()
@@ -77,7 +77,7 @@ class AuthViewModel: ObservableObject {
             var urlRequest = URLRequest(url: url!)
             urlRequest.setValue("Bearer " + idToken!, forHTTPHeaderField: "authorization")
             urlRequest.httpMethod = "POST"
-            urlRequest.addValue("multipart/form-data; boundary=" + "Boundary-\(UUID().uuidString)", forHTTPHeaderField: "Content")
+            urlRequest.addValue("multipart/form-data; boundary=" +  self.boundary, forHTTPHeaderField: "Content-Type")
             urlRequest.httpBody = httpBody
             URLSession.shared.dataTask(with: urlRequest) { data, resp, error in
                  if let error = error {
@@ -113,7 +113,7 @@ class AuthViewModel: ObservableObject {
             ]
                     
             let lineBreak = "\r\n"
-            var requestBody = Data()
+            var requestBody = NSMutableData()
             
             requestBody.append("\(lineBreak)--\(boundary + lineBreak)" .data(using: .utf8)!)
             requestBody.append("Content-Disposition: form-data; name=\"first_name\"\(lineBreak + lineBreak)".data(using: .utf8)!)
@@ -164,7 +164,9 @@ class AuthViewModel: ObservableObject {
             requestBody.append(profileImage.jpegData(compressionQuality: 0.99)!)
             requestBody.append("\(lineBreak)--\(boundary)--\(lineBreak)" .data(using: .utf8)!)
             
-            sendBackendUserRegistrationRequest(httpBody: requestBody)
+            print(requestBody.count)
+            
+            sendBackendUserRegistrationRequest(httpBody: requestBody as Data)
         }
         catch let error {
             DispatchQueue.main.async {
