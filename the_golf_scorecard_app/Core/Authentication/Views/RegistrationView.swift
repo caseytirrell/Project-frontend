@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import PhotosUI
 
 struct RegistrationView: View {
     @State private var firstName = ""
@@ -28,6 +29,8 @@ struct RegistrationView: View {
     @State private var email = ""
     @State private var showEmail = false
     @State private var password = ""
+    @State private var profileImage: UIImage?
+    @State private var photosPickerItem: PhotosPickerItem?
     @State private var showPassword = false
     @State private var confirmPassword = ""
     @State private var showConfirmPassword = false
@@ -66,6 +69,28 @@ struct RegistrationView: View {
 
                     InputView(text: $state, title: "State", placeholder: "NY", showError: showState)
                     InputView(text: $zipCode, title: "Zip Code", placeholder: "07285", showError: showZip)
+                    Text("Select profile image")
+                        .foregroundColor(Color(.darkGray))
+                        .fontWeight(.semibold)
+                        .font(.footnote)                    //profile pic
+                    PhotosPicker(selection: $photosPickerItem, matching: .images) {
+                        Image(uiImage: profileImage ?? UIImage(resource: .golfLogo))
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 75, height: 75)
+                            .clipShape(.circle)
+                    }
+                    .onChange(of: photosPickerItem) {_, _ in
+                        Task {
+                            if let photosPickerItem,
+                                let data = try? await photosPickerItem.loadTransferable(type: Data.self) {
+                                if let image = UIImage(data: data) {
+                                    profileImage = image
+                                }
+                            }
+                            photosPickerItem = nil
+                        }
+                    }
                 }
                 .padding(.horizontal)
                 .padding(.top, 12)
@@ -88,7 +113,7 @@ struct RegistrationView: View {
                 
                 Task {
                     do {
-                        try await viewModel.register(withEmail: email, password: password, firstName: firstName, lastName: lastName, phoneNumber: phoneNumber, address1: address1, address2: address2, city: city, state: state, zipCode: zipCode, birthday: birthday)
+                        try await viewModel.register(withEmail: email, password: password, firstName: firstName, lastName: lastName, phoneNumber: phoneNumber, address1: address1, address2: address2, city: city, state: state, zipCode: zipCode, birthday: birthday, profileImage:  profileImage ?? UIImage(resource: .golfLogo))
                                 // Navigate back to the login screen upon success
                         dismiss()
                     } 

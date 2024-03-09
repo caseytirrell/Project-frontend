@@ -9,6 +9,7 @@ import Foundation
 import Firebase
 import FirebaseAuth
 
+@MainActor
 class AuthViewModel: ObservableObject {
     @Published var userSession: FirebaseAuth.User?
     @Published var currentUser: User?
@@ -16,14 +17,13 @@ class AuthViewModel: ObservableObject {
     @Published var email: String?
     @Published var photoURL: String?
     @Published var isAuthenticated = false
-    
+    let boundary: String = "Boundry-\(UUID().uuidString)"
     init() {
             self.userSession = Auth.auth().currentUser
         }
     
     func logIn(withEmail email: String, password: String) async throws {
         print("Logging in user ...")
-        print(ProcessInfo.processInfo.environment["DATABASEURL"])
         do {
             let result = try await Auth.auth().signIn(withEmail: email, password: password)
             self.userSession = result.user
@@ -34,7 +34,7 @@ class AuthViewModel: ObservableObject {
                 self.isAuthenticated = true
             }
             print(result.user.uid)
-        } 
+        }
         catch {
             DispatchQueue.main.async {
                 self.errorMessage = error.localizedDescription
@@ -42,53 +42,43 @@ class AuthViewModel: ObservableObject {
         }
     }
     
-    func fetchIDTokenAndSendUserData() {
+    
+    func endpointString(endpoint: String) -> String {
+        let backendURL = ProcessInfo.processInfo.environment["DATABASEURL"]!
+        return  backendURL + endpoint
+    }
+    
+
+    
+    func sendBackendUserRegistrationRequest(httpBody: Data) {
         guard let user = Auth.auth().currentUser else { return }
         user.getIDTokenForcingRefresh(true) { idToken, error in
             if let error = error {
                 print("Error fetching ID Token: \(error.localizedDescription)")
                 return
             }
-            
-            guard let IDToken = idToken else { return }
-            let userData = ["email": user.email, "uid": user.uid]
-        
-            Task {
-                await self.sendUserDataToBackend(userData: userData)
-            }
-        }
-    }
-    
-    func sendUserDataToBackend(userData: [String: Any?]) async {
-        //Not sure how to 
-        let urlString = "https://localhost:5005/api/v1/users/register"
-        guard let url =  URL(string: urlString) else { return }
-        var urlRequest = URLRequest(url: url)
-        urlRequest.httpMethod = "POST"
-        urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        
-        do {
-            let JSONData = try JSONSerialization.data(withJSONObject: userData, options: [])
-            urlRequest.httpBody = JSONData
-            
-            let (_, response) = try await URLSession.shared.upload(for: urlRequest, from: JSONData)
-            guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-                
-                print("Server error or unexpected status code")
-                return
-            }
-            print("User data successfulyl sent to backend.")
-        }
-        catch {
-            print("Error serializing user data: \(error.localizedDescription)")
+            let url = URL(string: self.endpointString(endpoint: "api/v1/users/register"))
+            print(url?.absoluteString)
+            var urlRequest = URLRequest(url: url!)
+            urlRequest.setValue("Bearer " + idToken!, forHTTPHeaderField: "authorization")
+            urlRequest.httpMethod = "POST"
+            urlRequest.addValue("multipart/form-data; boundary=" + "Boundary-\(UUID().uuidString)", forHTTPHeaderField: "Content")
+            urlRequest.httpBody = httpBody
+            URLSession.shared.dataTask(with: urlRequest) { data, resp, error in
+                 if let error = error {
+                     print(error)
+                     return
+                 }
+                 
+                 print("success")
+             }.resume()
             return
         }
     }
     
-    func register(withEmail email: String, password: String, firstName: String, lastName:String, phoneNumber: String, address1: String, address2: String, city: String, state: String, zipCode: String, birthday: String) async throws {
+    func register(withEmail email: String, password: String, firstName: String, lastName:String, phoneNumber: String, address1: String, address2: String, city: String, state: String, zipCode: String, birthday: String, profileImage: UIImage) async throws {
         print("Registering user ... ")
         do {
-            
             let authResult = try await Auth.auth().createUser(withEmail: email, password: password)
             self.userSession = authResult.user
             
@@ -106,8 +96,60 @@ class AuthViewModel: ObservableObject {
                 "state": state,
                 "zipCode": zipCode
             ]
+                    
+            let lineBreak = "\r\n"
+            var requestBody = Data()
             
-            await sendUserDataToBackend(userData: userData)
+            requestBody.append("\(lineBreak)--\(boundary + lineBreak)" .data(using: .utf8)!)
+            requestBody.append("Content-Disposition: form-data; name=\"first_name\"\(lineBreak + lineBreak)".data(using: .utf8)!)
+            requestBody.append("\(firstName + lineBreak)".data(using: .utf8)!)
+
+            requestBody.append("\(lineBreak)--\(boundary + lineBreak)" .data(using: .utf8)!)
+            requestBody.append("Content-Disposition: form-data; name=\"last_name\"\(lineBreak + lineBreak)".data(using: .utf8)!)
+            requestBody.append("\(lastName + lineBreak)".data(using: .utf8)!)
+            
+            requestBody.append("\(lineBreak)--\(boundary + lineBreak)" .data(using: .utf8)!)
+            requestBody.append("Content-Disposition: form-data; name=\"email\"\(lineBreak + lineBreak)".data(using: .utf8)!)
+            requestBody.append("\(email + lineBreak)".data(using: .utf8)!)
+
+            requestBody.append("\(lineBreak)--\(boundary + lineBreak)" .data(using: .utf8)!)
+            requestBody.append("Content-Disposition: form-data; name=\"password\"\(lineBreak + lineBreak)".data(using: .utf8)!)
+            requestBody.append("\(password + lineBreak)".data(using: .utf8)!)
+
+            requestBody.append("\(lineBreak)--\(boundary + lineBreak)" .data(using: .utf8)!)
+            requestBody.append("Content-Disposition: form-data; name=\"phone_number\"\(lineBreak + lineBreak)".data(using: .utf8)!)
+            requestBody.append("\(phoneNumber + lineBreak)".data(using: .utf8)!)
+
+            requestBody.append("\(lineBreak)--\(boundary + lineBreak)" .data(using: .utf8)!)
+            requestBody.append("Content-Disposition: form-data; name=\"birth_day\"\(lineBreak + lineBreak)".data(using: .utf8)!)
+            requestBody.append("\(birthday + lineBreak)".data(using: .utf8)!)
+
+            requestBody.append("\(lineBreak)--\(boundary + lineBreak)" .data(using: .utf8)!)
+            requestBody.append("Content-Disposition: form-data; name=\"address_line_1\"\(lineBreak + lineBreak)".data(using: .utf8)!)
+            requestBody.append("\(address1 + lineBreak)".data(using: .utf8)!)
+
+            requestBody.append("\(lineBreak)--\(boundary + lineBreak)" .data(using: .utf8)!)
+            requestBody.append("Content-Disposition: form-data; name=\"address_line_2\"\(lineBreak + lineBreak)".data(using: .utf8)!)
+            requestBody.append("\(address2 + lineBreak)".data(using: .utf8)!)
+
+            requestBody.append("\(lineBreak)--\(boundary + lineBreak)" .data(using: .utf8)!)
+            requestBody.append("Content-Disposition: form-data; name=\"city\"\(lineBreak + lineBreak)".data(using: .utf8)!)
+            requestBody.append("\(city + lineBreak)".data(using: .utf8)!)
+
+            requestBody.append("\(lineBreak)--\(boundary + lineBreak)" .data(using: .utf8)!)
+            requestBody.append("Content-Disposition: form-data; name=\"state\"\(lineBreak + lineBreak)".data(using: .utf8)!)
+            requestBody.append("\(state + lineBreak)".data(using: .utf8)!)
+            
+            requestBody.append("\(lineBreak)--\(boundary + lineBreak)" .data(using: .utf8)!)
+            requestBody.append("Content-Disposition: form-data; name=\"zip_code\"\(lineBreak + lineBreak)".data(using: .utf8)!)
+            requestBody.append("\(zipCode + lineBreak)".data(using: .utf8)!)
+            
+            requestBody.append("Content-Disposition: form-data; name=\"profile_picture\"; filename=\"profile_image.jpg\"\(lineBreak)" .data(using: .utf8)!)
+            requestBody.append("Content-Type: image/jpeg\(lineBreak + lineBreak)" .data(using: .utf8)!)
+            requestBody.append(profileImage.jpegData(compressionQuality: 0.99)!)
+            requestBody.append("\(lineBreak)--\(boundary)--\(lineBreak)" .data(using: .utf8)!)
+            
+            sendBackendUserRegistrationRequest(httpBody: requestBody)
         }
         catch let error {
             DispatchQueue.main.async {
@@ -134,3 +176,4 @@ class AuthViewModel: ObservableObject {
         }
     }
 }
+

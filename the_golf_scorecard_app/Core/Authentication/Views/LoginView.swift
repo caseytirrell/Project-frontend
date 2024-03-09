@@ -34,7 +34,6 @@ struct LoginView: View {
                                     
                                     Task {
                                         try await viewModel.logIn(withEmail: email, password: password)
-                                        viewModel.fetchIDTokenAndSendUserData()
                                     }
                                 } label: {
                                     HStack {
