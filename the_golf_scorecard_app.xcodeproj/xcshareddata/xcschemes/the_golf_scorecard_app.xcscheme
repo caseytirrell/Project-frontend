@@ -76,7 +76,7 @@
       <EnvironmentVariables>
          <EnvironmentVariable
             key = "DATABASEURL"
-            value = "https://localhost:5005/"
+            value = "http://74.80.242.114:5005/"
             isEnabled = "YES">
          </EnvironmentVariable>
       </EnvironmentVariables>

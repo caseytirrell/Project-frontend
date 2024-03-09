@@ -23,6 +23,7 @@ class AuthViewModel: ObservableObject {
         }
     
     func logIn(withEmail email: String, password: String) async throws {
+        testBackendEndpoint()
         print("Logging in user ...")
         do {
             let result = try await Auth.auth().signIn(withEmail: email, password: password)
@@ -40,8 +41,22 @@ class AuthViewModel: ObservableObject {
                 self.errorMessage = error.localizedDescription
             }
         }
+        
     }
     
+    
+    func testBackendEndpoint() {
+        let endpointString = endpointString(endpoint: "")
+        let url = URL(string: endpointString)!
+        let task = URLSession.shared.dataTask(with: url) { data, response, error in
+            if let error = error {
+                print("Server Request Failed \(error)")
+            } else if let response = response {
+                print("Sever Messase: \(response)")
+            }
+        }
+        task.resume()
+    }
     
     func endpointString(endpoint: String) -> String {
         let backendURL = ProcessInfo.processInfo.environment["DATABASEURL"]!
