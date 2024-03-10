@@ -8,6 +8,7 @@
 import Foundation
 import Firebase
 import FirebaseAuth
+import Foundation
 
 @MainActor
 class AuthViewModel: ObservableObject {
@@ -70,7 +71,9 @@ class AuthViewModel: ObservableObject {
         guard let user = Auth.auth().currentUser else { return }
         user.getIDTokenForcingRefresh(true) { idToken, error in
             if let error = error {
-                print("Error fetching ID Token: \(error.localizedDescription)")
+                DispatchQueue.main.async {
+                    self.errorMessage = "Error signing out: \(error.localizedDescription)"
+                }
                 return
             }
             let url = URL(string: self.endpointString(endpoint: "api/v1/users/register"))
@@ -92,7 +95,7 @@ class AuthViewModel: ObservableObject {
         }
     }
     
-    func register(withEmail email: String, password: String, firstName: String, lastName:String, phoneNumber: String, address1: String, address2: String, city: String, state: String, zipCode: String, birthday: String, profileImage: UIImage) async throws {
+    func register(withEmail email: String, password: String, firstName: String, lastName:String, phoneNumber: String, address1: String, address2: String, city: String, state: String, zipCode: String, birthday: Date, profileImage: UIImage) async throws {
         print("Registering user ... ")
         do {
             
@@ -122,9 +125,13 @@ class AuthViewModel: ObservableObject {
             requestBody.append("Content-Disposition: form-data; name=\"phone_number\"\(lineBreak + lineBreak)".data(using: .utf8)!)
             requestBody.append("\(phoneNumber + lineBreak)".data(using: .utf8)!)
 
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd"
+            let mySQLDate = dateFormatter.string(from: birthday)
+            
             requestBody.append("\(lineBreak)--\(boundary + lineBreak)" .data(using: .utf8)!)
             requestBody.append("Content-Disposition: form-data; name=\"birth_day\"\(lineBreak + lineBreak)".data(using: .utf8)!)
-            requestBody.append("\(birthday + lineBreak)".data(using: .utf8)!)
+            requestBody.append("\(mySQLDate + lineBreak)".data(using: .utf8)!)
 
             requestBody.append("\(lineBreak)--\(boundary + lineBreak)" .data(using: .utf8)!)
             requestBody.append("Content-Disposition: form-data; name=\"address_line_1\"\(lineBreak + lineBreak)".data(using: .utf8)!)
@@ -156,6 +163,11 @@ class AuthViewModel: ObservableObject {
             
             sendBackendUserRegistrationRequest(httpBody: requestBody as Data)
             
+            DispatchQueue.main.async {
+                self.userSession = authResult.user
+                self.email = authResult.user.email
+                self.isAuthenticated = true
+            }
             print("Registeration succesful")
         }
         catch let error {

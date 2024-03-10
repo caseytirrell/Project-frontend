@@ -24,7 +24,7 @@ struct RegistrationView: View {
     @State private var showState = false
     @State private var zipCode = ""
     @State private var showZip = false
-    @State private var birthday = ""
+    @State private var birthday = Date()
     @State private var showDOB = false
     @State private var email = ""
     @State private var showEmail = false
@@ -35,6 +35,7 @@ struct RegistrationView: View {
     @State private var confirmPassword = ""
     @State private var showConfirmPassword = false
     @State private var passwordMatch = true
+
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var viewModel: AuthViewModel
     
@@ -60,7 +61,14 @@ struct RegistrationView: View {
                     
                     InputView(text: $phoneNumber, title: "Phone Number ", placeholder: "123 469 7890", showError: showPhoneNumber)
                     
-                    InputView(text: $birthday, title: "Birthday", placeholder: "YYYY-MM-DD", showError: showDOB)
+                    DatePicker(
+                        "Birthday",
+                        selection: $birthday,
+                        displayedComponents: .date
+                    )
+                    .foregroundColor(Color(.darkGray))
+                    .fontWeight(.semibold)
+                    .font(.footnote)
                     
                     InputView(text: $address1, title: "Address Line 1 ", placeholder: "100 Borad St.", showError: showAddress1)
                     
@@ -103,7 +111,7 @@ struct RegistrationView: View {
                 .padding(.horizontal)
                 .padding(.top, 12)
             }
-            .frame(height: UIScreen.main.bounds.height - 430)            // log in button
+            .frame(height: UIScreen.main.bounds.height - 450)            // log in button
             Button {
                 showFirstName = firstName.isEmpty
                 showLastName = lastName.isEmpty
@@ -111,12 +119,12 @@ struct RegistrationView: View {
                 showPassword = email.isEmpty
                 showConfirmPassword = confirmPassword.isEmpty
                 passwordMatch = (password == confirmPassword)
-                showPhoneNumber = phoneNumber.isEmpty
-                showDOB = birthday.isEmpty
+                showPhoneNumber = phoneNumber.isEmpty || phoneNumber.count != 10
                 showAddress1 = address1.isEmpty
-                showCity = state.isEmpty
-                showState = state.isEmpty
-                showZip = state.isEmpty
+                showCity = city.isEmpty
+                showState = state.isEmpty || state.count != 2
+                showZip = zipCode.isEmpty || zipCode.count != 5
+                
                 
                 guard !showFirstName && !showLastName && !showEmail && !showPassword && !showConfirmPassword && passwordMatch && !showPhoneNumber && !showDOB && !showAddress1 && !showCity && !showState && !showZip else {return}
                 

@@ -42,7 +42,6 @@ struct ContentView: View {
                             .shadow(color: .black, radius: 3)
                             .padding()
                     }
-
                     NavigationLink(destination: LoginView(), isActive: $isActive) { EmptyView() }
                 }
                 .navigationBarHidden(true)
