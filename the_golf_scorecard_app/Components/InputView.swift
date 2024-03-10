@@ -11,28 +11,51 @@ struct InputView: View {
     @Binding var text: String
     let title: String
     let placeholder: String
-    var isSecureFiled = false
-    
+    var isSecureFiled: Bool = false
+    var showError: Bool = false
+    var validationIcon: Image? = nil
+
     var body: some View {
-        VStack (alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 12) {
             Text(title)
                 .foregroundColor(Color(.darkGray))
                 .fontWeight(.semibold)
                 .font(.footnote)
             
-            if isSecureFiled {
-                SecureField(placeholder, text: $text)
-                    .font(.system(size: 14))
-            } else {
-                TextField(placeholder, text: $text)
-                    .font(.system(size: 14))
+            HStack {
+                ZStack(alignment: .leading) {
+                    if text.isEmpty {
+                        Text(placeholder)
+                            .foregroundColor(showError ? .red : .gray)
+                            .font(.system(size: 14))
+                    }
+                    
+                    if isSecureFiled {
+                        SecureField("", text: $text)
+                            .font(.system(size: 14))
+                    } else {
+                        TextField("", text: $text)
+                            .font(.system(size: 14))
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                
+                if let validationIcon = validationIcon {
+                    validationIcon
+                        .foregroundColor(.green)
+                        .transition(.scale)
+                }
             }
             
             Divider()
+                .background(showError ? Color.red : Color(.separator)) // Adjusted for potential typo in Color.clear
         }
     }
 }
 
-#Preview {
-    InputView(text: .constant(""), title: "Email Addreaa", placeholder: "yourname@example.com")
+// Preview
+struct InputView_Previews: PreviewProvider {
+    static var previews: some View {
+        InputView(text: .constant(""), title: "Email Address", placeholder: "yourname@example.com")
+    }
 }

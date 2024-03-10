@@ -7,7 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B221653D2B96277B00E75133 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B221653C2B96277B00E75133 /* Assets.xcassets */; };
+		5D13D1DD2B97A5B900DCE086 /* HomePageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D13D1DC2B97A5B900DCE086 /* HomePageView.swift */; };
+		8DF0A9DB2B9D22B1000B566B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8DF0A9DA2B9D22B1000B566B /* GoogleService-Info.plist */; };
 		B221653F2B962C7200E75133 /* InputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B221653E2B962C7200E75133 /* InputView.swift */; };
 		B22165412B96336300E75133 /* RegistrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B22165402B96336300E75133 /* RegistrationView.swift */; };
 		B22165442B963C5A00E75133 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B22165432B963C5A00E75133 /* ProfileView.swift */; };
@@ -23,7 +24,6 @@
 		B2694B622B95395C0086B76A /* the_golf_scorecard_appTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2694B612B95395C0086B76A /* the_golf_scorecard_appTests.swift */; };
 		B2694B6C2B95395C0086B76A /* the_golf_scorecard_appUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2694B6B2B95395C0086B76A /* the_golf_scorecard_appUITests.swift */; };
 		B2694B6E2B95395C0086B76A /* the_golf_scorecard_appUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2694B6D2B95395C0086B76A /* the_golf_scorecard_appUITestsLaunchTests.swift */; };
-		B2694B7B2B953CA80086B76A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B2694B7A2B953CA80086B76A /* GoogleService-Info.plist */; };
 		B2694B7E2B953D7F0086B76A /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = B2694B7D2B953D7F0086B76A /* FirebaseAuth */; };
 		B2694B802B953D7F0086B76A /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = B2694B7F2B953D7F0086B76A /* FirebaseDatabase */; };
 		B2694B822B953D7F0086B76A /* FirebaseDatabaseSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B2694B812B953D7F0086B76A /* FirebaseDatabaseSwift */; };
@@ -51,7 +51,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		B221653C2B96277B00E75133 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = "../../../the-golf-score-card-frontend/The-Golf-Scorecard/The-Golf-Scorecard/Assets.xcassets"; sourceTree = "<group>"; };
+		5D13D1DC2B97A5B900DCE086 /* HomePageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePageView.swift; sourceTree = "<group>"; };
+		8DF0A9DA2B9D22B1000B566B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		B221653E2B962C7200E75133 /* InputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputView.swift; sourceTree = "<group>"; };
 		B22165402B96336300E75133 /* RegistrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationView.swift; sourceTree = "<group>"; };
 		B22165432B963C5A00E75133 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
@@ -68,7 +69,6 @@
 		B2694B672B95395C0086B76A /* the_golf_scorecard_appUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = the_golf_scorecard_appUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B2694B6B2B95395C0086B76A /* the_golf_scorecard_appUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = the_golf_scorecard_appUITests.swift; sourceTree = "<group>"; };
 		B2694B6D2B95395C0086B76A /* the_golf_scorecard_appUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = the_golf_scorecard_appUITestsLaunchTests.swift; sourceTree = "<group>"; };
-		B2694B7A2B953CA80086B76A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		B2694B922B9542AE0086B76A /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -117,6 +117,7 @@
 			isa = PBXGroup;
 			children = (
 				B2694B922B9542AE0086B76A /* LoginView.swift */,
+				5D13D1DC2B97A5B900DCE086 /* HomePageView.swift */,
 				B22165402B96336300E75133 /* RegistrationView.swift */,
 			);
 			path = Views;
@@ -141,6 +142,7 @@
 		B2694B442B95395B0086B76A = {
 			isa = PBXGroup;
 			children = (
+				8DF0A9DA2B9D22B1000B566B /* GoogleService-Info.plist */,
 				B2694B4F2B95395B0086B76A /* the_golf_scorecard_app */,
 				B2694B602B95395C0086B76A /* the_golf_scorecard_appTests */,
 				B2694B6A2B95395C0086B76A /* the_golf_scorecard_appUITests */,
@@ -165,8 +167,6 @@
 				B2694B8B2B953F960086B76A /* Model */,
 				B2694B8A2B953F890086B76A /* Components */,
 				B2694B892B953F750086B76A /* App */,
-				B2694B7A2B953CA80086B76A /* GoogleService-Info.plist */,
-				B221653C2B96277B00E75133 /* Assets.xcassets */,
 				B2694B562B95395C0086B76A /* Preview Content */,
 			);
 			path = the_golf_scorecard_app;
@@ -368,8 +368,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B2694B582B95395C0086B76A /* Preview Assets.xcassets in Resources */,
-				B221653D2B96277B00E75133 /* Assets.xcassets in Resources */,
-				B2694B7B2B953CA80086B76A /* GoogleService-Info.plist in Resources */,
+				8DF0A9DB2B9D22B1000B566B /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -403,6 +402,7 @@
 				B22165442B963C5A00E75133 /* ProfileView.swift in Sources */,
 				B22165412B96336300E75133 /* RegistrationView.swift in Sources */,
 				B22165462B963DEB00E75133 /* SettingsRowView.swift in Sources */,
+				5D13D1DD2B97A5B900DCE086 /* HomePageView.swift in Sources */,
 				B22165532B964DD900E75133 /* AuthViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -492,6 +492,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				"INFOPLIST_FILE[sdk=*]" = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -569,6 +570,10 @@
 				DEVELOPMENT_ASSET_PATHS = "\"the_golf_scorecard_app/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "";
+				"INFOPLIST_FILE[sdk=iphonesimulator*]" = "";
+				INFOPLIST_KEY_CFBundleDisplayName = "";
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -579,6 +584,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
+				NEW_SETTING = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "the-golf-scorecard.the-golf-scorecard-app";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -597,6 +603,9 @@
 				DEVELOPMENT_ASSET_PATHS = "\"the_golf_scorecard_app/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "";
+				INFOPLIST_KEY_CFBundleDisplayName = "";
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -607,6 +616,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
+				NEW_SETTING = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "the-golf-scorecard.the-golf-scorecard-app";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
