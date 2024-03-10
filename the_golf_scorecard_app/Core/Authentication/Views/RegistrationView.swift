@@ -34,6 +34,7 @@ struct RegistrationView: View {
     @State private var showPassword = false
     @State private var confirmPassword = ""
     @State private var showConfirmPassword = false
+    @State private var passwordMatch = true
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var viewModel: AuthViewModel
     
@@ -53,9 +54,9 @@ struct RegistrationView: View {
                     InputView(text: $lastName, title: "Last Name", placeholder: "Last Name", showError: showLastName)
                     
                     InputView(text: $email, title: "Email Address ", placeholder: "yourname@example.com",  showError: showEmail)
-                    InputView(text: $password, title: "Password", placeholder: "Enter a password", isSecureFiled: true, showError: showPassword)
+                    InputView(text: $password, title: "Password", placeholder: "Enter a password", isSecureFiled: true, showError: showPassword, validationIcon: password == confirmPassword && !password.isEmpty ? Image(systemName: "checkmark.circle.fill") : nil)
                     
-                    InputView(text: $confirmPassword, title: "Confirm Password", placeholder: "Confirm your Password", isSecureFiled: true, showError: showConfirmPassword)
+                    InputView(text: $confirmPassword, title: "Confirm Password", placeholder: "Confirm your Password", isSecureFiled: true, showError: showConfirmPassword, validationIcon: password == confirmPassword && !password.isEmpty ? Image(systemName: "checkmark.circle.fill") : nil)
                     
                     InputView(text: $phoneNumber, title: "Phone Number ", placeholder: "123 469 7890", showError: showPhoneNumber)
                     
@@ -69,6 +70,13 @@ struct RegistrationView: View {
 
                     InputView(text: $state, title: "State", placeholder: "NY", showError: showState)
                     InputView(text: $zipCode, title: "Zip Code", placeholder: "07285", showError: showZip)
+                    
+                    if !passwordMatch {
+                        
+                        Text("Passwords dont match...")
+                            .foregroundColor(.red)
+                    }
+                    
                     Text("Select profile image")
                         .foregroundColor(Color(.darkGray))
                         .fontWeight(.semibold)
@@ -101,6 +109,8 @@ struct RegistrationView: View {
                 showLastName = lastName.isEmpty
                 showEmail = email.isEmpty
                 showPassword = email.isEmpty
+                showConfirmPassword = confirmPassword.isEmpty
+                passwordMatch = (password == confirmPassword)
                 showPhoneNumber = phoneNumber.isEmpty
                 showDOB = birthday.isEmpty
                 showAddress1 = address1.isEmpty
@@ -108,7 +118,7 @@ struct RegistrationView: View {
                 showState = state.isEmpty
                 showZip = state.isEmpty
                 
-                guard !showFirstName && !showLastName && !showEmail && !showPassword && !showPhoneNumber && !showDOB && !showAddress1 && !showCity && !showState && !showZip else {return}
+                guard !showFirstName && !showLastName && !showEmail && !showPassword && !showConfirmPassword && passwordMatch && !showPhoneNumber && !showDOB && !showAddress1 && !showCity && !showState && !showZip else {return}
                 
                 
                 Task {

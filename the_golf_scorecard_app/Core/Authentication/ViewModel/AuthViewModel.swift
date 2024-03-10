@@ -94,8 +94,6 @@ class AuthViewModel: ObservableObject {
     func register(withEmail email: String, password: String, firstName: String, lastName:String, phoneNumber: String, address1: String, address2: String, city: String, state: String, zipCode: String, birthday: String, profileImage: UIImage) async throws {
         print("Registering user ... ")
         do {
-            let authResult = try await Auth.auth().createUser(withEmail: email, password: password)
-            self.userSession = authResult.user
             
             let userData: [String: Any] = [
                 
@@ -167,6 +165,9 @@ class AuthViewModel: ObservableObject {
             print(requestBody.count)
             
             sendBackendUserRegistrationRequest(httpBody: requestBody as Data)
+            //Moved Firebase User Registration to after database User Registration
+            let authResult = try await Auth.auth().createUser(withEmail: email, password: password)
+            self.userSession = authResult.user
         }
         catch let error {
             DispatchQueue.main.async {
