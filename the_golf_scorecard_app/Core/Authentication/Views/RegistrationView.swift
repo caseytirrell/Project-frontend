@@ -103,7 +103,7 @@ struct RegistrationView: View {
                 .padding(.horizontal)
                 .padding(.top, 12)
             }
-            .frame(height: UIScreen.main.bounds.height - 400)            // log in button
+            .frame(height: UIScreen.main.bounds.height - 430)            // log in button
             Button {
                 showFirstName = firstName.isEmpty
                 showLastName = lastName.isEmpty

@@ -23,12 +23,11 @@ class AuthViewModel: ObservableObject {
         }
     
     func logIn(withEmail email: String, password: String) async throws {
-        testBackendEndpoint()
+
+        //testBackendEndpoint()
         print("Logging in user ...")
         do {
             let result = try await Auth.auth().signIn(withEmail: email, password: password)
-            self.userSession = result.user
-            
             DispatchQueue.main.async {
                 self.userSession = result.user
                 self.email = result.user.email
@@ -52,7 +51,9 @@ class AuthViewModel: ObservableObject {
             if let error = error {
                 print("Server Request Failed \(error)")
             } else if let response = response {
-                print("Sever Messase: \(String(data: data!, encoding: .utf8))")
+                print("Backend is up");
+                print(String(data: data!, encoding: .utf8)!)
+                print(response)
             }
         }
         task.resume()
@@ -73,7 +74,7 @@ class AuthViewModel: ObservableObject {
                 return
             }
             let url = URL(string: self.endpointString(endpoint: "api/v1/users/register"))
-            print(url?.absoluteString)
+            print(url!.absoluteString)
             var urlRequest = URLRequest(url: url!)
             urlRequest.setValue("Bearer " + idToken!, forHTTPHeaderField: "authorization")
             urlRequest.httpMethod = "POST"
@@ -95,23 +96,11 @@ class AuthViewModel: ObservableObject {
         print("Registering user ... ")
         do {
             
-            let userData: [String: Any] = [
-                
-                "firstName": firstName,
-                "lastName": lastName,
-                "email": email,
-                "password": password,
-                "phoneNumber": phoneNumber,
-                "birthday": birthday,
-                "address1": address1,
-                "address2": address2,
-                "city": city,
-                "state": state,
-                "zipCode": zipCode
-            ]
-                    
+            let authResult = try await Auth.auth().createUser(withEmail: email, password: password)
+            self.userSession = authResult.user
+            
             let lineBreak = "\r\n"
-            var requestBody = NSMutableData()
+            var requestBody = Data()
             
             requestBody.append("\(lineBreak)--\(boundary + lineBreak)" .data(using: .utf8)!)
             requestBody.append("Content-Disposition: form-data; name=\"first_name\"\(lineBreak + lineBreak)".data(using: .utf8)!)
@@ -157,6 +146,7 @@ class AuthViewModel: ObservableObject {
             requestBody.append("Content-Disposition: form-data; name=\"zip_code\"\(lineBreak + lineBreak)".data(using: .utf8)!)
             requestBody.append("\(zipCode + lineBreak)".data(using: .utf8)!)
             
+            requestBody.append("\(lineBreak)--\(boundary + lineBreak)" .data(using: .utf8)!)
             requestBody.append("Content-Disposition: form-data; name=\"profile_picture\"; filename=\"profile_image.jpg\"\(lineBreak)" .data(using: .utf8)!)
             requestBody.append("Content-Type: image/jpeg\(lineBreak + lineBreak)" .data(using: .utf8)!)
             requestBody.append(profileImage.jpegData(compressionQuality: 0.99)!)
@@ -165,9 +155,8 @@ class AuthViewModel: ObservableObject {
             print(requestBody.count)
             
             sendBackendUserRegistrationRequest(httpBody: requestBody as Data)
-            //Moved Firebase User Registration to after database User Registration
-            let authResult = try await Auth.auth().createUser(withEmail: email, password: password)
-            self.userSession = authResult.user
+            
+            print("Registeration succesful")
         }
         catch let error {
             DispatchQueue.main.async {
