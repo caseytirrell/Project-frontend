@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		5D13D1DD2B97A5B900DCE086 /* HomePageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D13D1DC2B97A5B900DCE086 /* HomePageView.swift */; };
+		5DEFD5EA2B9F7F1D004127DD /* Course.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DEFD5E92B9F7F1D004127DD /* Course.swift */; };
+		5DEFD5ED2B9F8079004127DD /* CoursesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DEFD5EC2B9F8078004127DD /* CoursesViewModel.swift */; };
+		5DEFD5EF2B9F8D1C004127DD /* CoursesListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DEFD5EE2B9F8D1C004127DD /* CoursesListView.swift */; };
 		8DF0A9DB2B9D22B1000B566B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8DF0A9DA2B9D22B1000B566B /* GoogleService-Info.plist */; };
 		B221653F2B962C7200E75133 /* InputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B221653E2B962C7200E75133 /* InputView.swift */; };
 		B22165412B96336300E75133 /* RegistrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B22165402B96336300E75133 /* RegistrationView.swift */; };
@@ -52,6 +55,9 @@
 
 /* Begin PBXFileReference section */
 		5D13D1DC2B97A5B900DCE086 /* HomePageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePageView.swift; sourceTree = "<group>"; };
+		5DEFD5E92B9F7F1D004127DD /* Course.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Course.swift; sourceTree = "<group>"; };
+		5DEFD5EC2B9F8078004127DD /* CoursesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoursesViewModel.swift; sourceTree = "<group>"; };
+		5DEFD5EE2B9F8D1C004127DD /* CoursesListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoursesListView.swift; sourceTree = "<group>"; };
 		8DF0A9DA2B9D22B1000B566B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		B221653E2B962C7200E75133 /* InputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputView.swift; sourceTree = "<group>"; };
 		B22165402B96336300E75133 /* RegistrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationView.swift; sourceTree = "<group>"; };
@@ -105,6 +111,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5DEFD5E82B9F7F05004127DD /* Courses */ = {
+			isa = PBXGroup;
+			children = (
+				5DEFD5E92B9F7F1D004127DD /* Course.swift */,
+				5DEFD5EC2B9F8078004127DD /* CoursesViewModel.swift */,
+				5DEFD5EE2B9F8D1C004127DD /* CoursesListView.swift */,
+			);
+			path = Courses;
+			sourceTree = "<group>";
+		};
 		B22165422B963C3A00E75133 /* Profile */ = {
 			isa = PBXGroup;
 			children = (
@@ -225,6 +241,7 @@
 		B2694B8C2B953F9C0086B76A /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				5DEFD5E82B9F7F05004127DD /* Courses */,
 				B22165542B9653D200E75133 /* Start */,
 				B22165422B963C3A00E75133 /* Profile */,
 				B2694B8F2B953FF10086B76A /* Authentication */,
@@ -393,13 +410,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5DEFD5EA2B9F7F1D004127DD /* Course.swift in Sources */,
 				B2694B932B9542AE0086B76A /* LoginView.swift in Sources */,
 				B22165562B9653E500E75133 /* StartView.swift in Sources */,
+				5DEFD5EF2B9F8D1C004127DD /* CoursesListView.swift in Sources */,
 				B221653F2B962C7200E75133 /* InputView.swift in Sources */,
 				B2694B532B95395B0086B76A /* ContentView.swift in Sources */,
 				B2694B512B95395B0086B76A /* the_golf_scorecard_appApp.swift in Sources */,
 				B22165482B96413B00E75133 /* User.swift in Sources */,
 				B22165442B963C5A00E75133 /* ProfileView.swift in Sources */,
+				5DEFD5ED2B9F8079004127DD /* CoursesViewModel.swift in Sources */,
 				B22165412B96336300E75133 /* RegistrationView.swift in Sources */,
 				B22165462B963DEB00E75133 /* SettingsRowView.swift in Sources */,
 				5D13D1DD2B97A5B900DCE086 /* HomePageView.swift in Sources */,

@@ -12,11 +12,8 @@ struct HomePageView: View {
     var body: some View {
         ZStack {
             Color.white.edgesIgnoringSafeArea(/*@START_MENU_TOKEN@*/.all/*@END_MENU_TOKEN@*/)
-            
             VStack(spacing: 10) {
 
-                
-                
                 Image("golf_logo")
                     .resizable()
                     .scaledToFill()
@@ -25,19 +22,20 @@ struct HomePageView: View {
                     .padding(.horizontal, 100)
                 
                 Text("Welcome to")
-                    .font(.custom("Inter Regular", size: 34))
+                    .font(.custom("Nunito-Medium", size: 34))
                     .fixedSize(horizontal: false, vertical: true)
                 
                 Text("The Golf Scorecard!")
-                    .font(.custom("Inter Regular", size: 34))
+                    .font(.custom("Nunito-Medium", size: 34))
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.bottom, 10)
                 
                 
-                Button("Courses") {
-                    
+                NavigationLink(destination: CoursesListView()) {
+                    Text("Courses")
                 }
                 .buttonStyle(PrimaryButtonStyle())
+
                 
                 Button("Register") {
                     
@@ -66,7 +64,7 @@ struct HomePageView: View {
                         
                     }) {
                         Text("About Us")
-                            .font(.custom("Inter Regular", size: 20))
+                            .font(.custom("Nunito-Medium", size: 20))
                             .foregroundColor(.black)
                             .padding()
                             .background(Color.orange)
@@ -78,7 +76,7 @@ struct HomePageView: View {
                     } label: {
                         HStack(spacing: 2){
                             Text("Profile")
-                                .font(.custom("Inter Regular", size: 20))
+                                .font(.custom("Nunito-Medium", size: 20))
                                 .foregroundColor(.black)
                                 .padding()
                                 .background(Color.red)
@@ -100,7 +98,7 @@ struct HomePageView: View {
             ToolbarItem(placement: .navigationBarLeading) {
                 if let userEmail = authViewModel.email {
                     Text("Logged in as \(userEmail)")
-                        .font(.custom("Inter Regular", size: 12))
+                        .font(.custom("Nunito-Medium", size: 12))
                         .foregroundColor(.black) // Adjust the color as needed
                 }
             }
@@ -132,7 +130,7 @@ struct PrimaryButtonStyle: ButtonStyle {
 
     func makeBody(configuration: Self.Configuration) -> some View {
         configuration.label
-            .font(.custom("Inter Regular", size: 20))
+            .font(.custom("Nunito-Medium", size: 20))
             .foregroundColor(foregroundColor)
             .padding()
             .frame(width: width, height: height)
