@@ -58,6 +58,7 @@
 		5DEFD5E92B9F7F1D004127DD /* Course.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Course.swift; sourceTree = "<group>"; };
 		5DEFD5EC2B9F8078004127DD /* CoursesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoursesViewModel.swift; sourceTree = "<group>"; };
 		5DEFD5EE2B9F8D1C004127DD /* CoursesListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoursesListView.swift; sourceTree = "<group>"; };
+		8D7DAE872B9FB30400CD5E89 /* the-golf-scorecard-app-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "the-golf-scorecard-app-Info.plist"; sourceTree = SOURCE_ROOT; };
 		8DF0A9DA2B9D22B1000B566B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		B221653E2B962C7200E75133 /* InputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputView.swift; sourceTree = "<group>"; };
 		B22165402B96336300E75133 /* RegistrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationView.swift; sourceTree = "<group>"; };
@@ -179,6 +180,7 @@
 		B2694B4F2B95395B0086B76A /* the_golf_scorecard_app */ = {
 			isa = PBXGroup;
 			children = (
+				8D7DAE872B9FB30400CD5E89 /* the-golf-scorecard-app-Info.plist */,
 				B2694B8C2B953F9C0086B76A /* Core */,
 				B2694B8B2B953F960086B76A /* Model */,
 				B2694B8A2B953F890086B76A /* Components */,
@@ -590,7 +592,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"the_golf_scorecard_app/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "";
+				INFOPLIST_FILE = "the-golf-scorecard-app-Info.plist";
 				"INFOPLIST_FILE[sdk=iphonesimulator*]" = "";
 				INFOPLIST_KEY_CFBundleDisplayName = "";
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
@@ -623,7 +625,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"the_golf_scorecard_app/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "";
+				INFOPLIST_FILE = "the-golf-scorecard-app-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "";
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
