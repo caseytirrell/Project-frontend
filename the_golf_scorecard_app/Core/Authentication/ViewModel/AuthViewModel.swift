@@ -17,11 +17,16 @@ class AuthViewModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var email: String?
     @Published var photoURL: String?
+    @Published var profileImage: UIImage?
     @Published var isAuthenticated = false
     let boundary: String = "Boundry-\(UUID().uuidString)"
     init() {
             self.userSession = Auth.auth().currentUser
+        Task {
+            try await getUserProfile()
+            try await getUserProfilePicture()
         }
+    }
     
     func logIn(withEmail email: String, password: String) async throws {
 
@@ -34,6 +39,11 @@ class AuthViewModel: ObservableObject {
                 self.email = result.user.email
                 self.isAuthenticated = true
             }
+            try await getUserProfile()
+            
+            print(self.userSession)
+            try await getUserProfilePicture()
+            print(self.profileImage.hashValue)
             print(result.user.uid)
         }
         catch {
@@ -65,14 +75,13 @@ class AuthViewModel: ObservableObject {
         return  backendURL + endpoint
     }
     
-
     
     func sendBackendUserRegistrationRequest(httpBody: Data) {
         guard let user = Auth.auth().currentUser else { return }
         user.getIDTokenForcingRefresh(true) { idToken, error in
             if let error = error {
                 DispatchQueue.main.async {
-                    self.errorMessage = "Error signing out: \(error.localizedDescription)"
+                    self.errorMessage = "Error getting user token out: \(error.localizedDescription)"
                 }
                 return
             }
@@ -83,7 +92,7 @@ class AuthViewModel: ObservableObject {
             urlRequest.httpMethod = "POST"
             urlRequest.addValue("multipart/form-data; boundary=" +  self.boundary, forHTTPHeaderField: "Content-Type")
             urlRequest.httpBody = httpBody
-            URLSession.shared.dataTask(with: urlRequest) { data, resp, error in
+            URLSession.shared.dataTask(with: urlRequest) { data, response, error in
                  if let error = error {
                      print(error)
                      return
@@ -168,6 +177,9 @@ class AuthViewModel: ObservableObject {
                 self.email = authResult.user.email
                 self.isAuthenticated = true
             }
+            
+            try await getUserProfile()
+            try await getUserProfilePicture()
             print("Registeration succesful")
         }
         catch let error {
@@ -178,6 +190,35 @@ class AuthViewModel: ObservableObject {
             throw error
         }
     }
+    
+    func getUserProfile() async throws {
+        guard let user = Auth.auth().currentUser else { return }
+        let userToken = try? await user.getIDTokenResult(forcingRefresh: true)
+
+            let endpoint = "api/v1/users/user?user_id=\(self.userSession!.uid)"
+            let url = URL(string: self.endpointString(endpoint: endpoint))!
+            var urlRequest = URLRequest(url: url)
+            urlRequest.setValue("Bearer " + (userToken!.token), forHTTPHeaderField: "authorization")
+            urlRequest.httpMethod = "GET"
+            let (data, _) = try await URLSession.shared.data(for: urlRequest)
+            let profile = try! JSONDecoder().decode(User.self, from: data)
+            print(profile)
+            self.currentUser = profile
+
+    }
+    
+    func getUserProfilePicture() async throws {
+        guard let user = Auth.auth().currentUser else { return }
+        let userToken = try? await user.getIDTokenResult(forcingRefresh: true)
+        let url = URL(string: self.endpointString(endpoint: "api/v1/users/profile_picture"))!
+        var urlRequest = URLRequest(url: url)
+        urlRequest.setValue("Bearer " + (userToken!.token), forHTTPHeaderField: "authorization")
+        urlRequest.httpMethod = "GET"
+        let (data, _) = try await URLSession.shared.data(for: urlRequest)
+        profileImage = UIImage(data: data)
+    
+    }
+    
     
     func signOut() {
         do {

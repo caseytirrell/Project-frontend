@@ -6,12 +6,20 @@
 //
 
 import Foundation
+import SwiftUI
 
-struct User: Identifiable, Codable {
+struct User: Identifiable, Decodable {
     let id: String
     let firstName: String
     let lastName: String
     let email: String
+    let phoneNumber: String
+    let address1: String
+    let address2: String
+    let city: String
+    let state: String
+    let zipCode: String
+    let profileImage: String
     
     var initials: String {
         let formatter = PersonNameComponentsFormatter()
@@ -29,5 +37,5 @@ struct User: Identifiable, Codable {
 }
 
 extension User {
-    static var MOCK_USER = User(id: NSUUID().uuidString, firstName: "Siva Anand", lastName: "Sivakumar", email:"ss546@njit.edu")
+    static var MOCK_USER = User(id: NSUUID().uuidString, firstName: "Siva Anand", lastName: "Sivakumar", email:"ss546@njit.edu", phoneNumber: "2675676907", address1: "100 Summit St.", address2: "Apt 4", city: "Newark", state: "NJ", zipCode: "08790", profileImage: "")
 }

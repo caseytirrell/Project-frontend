@@ -8,46 +8,66 @@
 import SwiftUI
 
 struct ProfileView: View {
+    @EnvironmentObject var viewModel: AuthViewModel
     var body: some View {
-        List {
-            Section{
-                HStack {
-                    Text(User.MOCK_USER.initials)
-                        .font(.title)
-                        .fontWeight(.semibold)
-                        .frame(width: 72, height: 72)
-                        .background(Color(.systemGray))
-                        .clipShape(Circle())
+        if let user = viewModel.currentUser {
+            List {
+                Section{
+                    HStack {
+                        Image(uiImage: viewModel.profileImage ?? UIImage(resource: .golfLogo))
+                            .resizable()
+                            .scaledToFill()
+                            .fontWeight(.semibold)
+                            .frame(width: 72, height: 72)
+                            .background(Color(.systemGray))
+                            .clipShape(Circle())
+                    }
+                    
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(user.fullName)
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .padding(.top, 4)
+                        Text(user.email)
+                            .font(.footnote)
+                            .foregroundStyle(.gray)
+                        Text(user.phoneNumber)
+                            .font(.footnote)
+                            .foregroundStyle(.gray)
+                    }
+                    
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Address")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .padding(.top, 4)
+                        Text(user.address1 + ", " + user.address2)
+                            .font(.footnote)
+                            .foregroundStyle(.gray)
+                        Text(user.city + ", " + user.state + " " + user.zipCode)
+                            .font(.footnote)
+                            .foregroundStyle(.gray)
+                    }
+                    
                 }
-                
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(User.MOCK_USER.fullName)
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .padding(.top, 4)
-                    Text(User.MOCK_USER.email)
-                        .font(.footnote)
-                        .foregroundStyle(.gray)
+                Section("General") {
+                    HStack {
+                        SettingsRowView(imageName: "gear", title: "Version", tintColor: Color(.systemGray))
+                        Spacer()
+                        Text("1.0.0")
+                            .font(.subheadline)
+                            .foregroundStyle(.gray)
+                    }
                 }
-                
+                Section ("Account") {
+                    Button {
+                        viewModel.signOut()
+                        print("Log Out")
+                    } label: {
+                        SettingsRowView(imageName: "arrow.left.circle.fill", title: "Sign Out", tintColor: .red)
+                    }
+                }
             }
-            Section("General") {
-                HStack {
-                    SettingsRowView(imageName: "gear", title: "Version", tintColor: Color(.systemGray))
-                    Spacer()
-                    Text("1.0.0")
-                        .font(.subheadline)
-                        .foregroundStyle(.gray)
-                }
-            }
-            Section ("Account") {
-                Button {
-                    print("Log Out")
-                } label: {
-                    SettingsRowView(imageName: "arrow.left.circle.fill", title: "Sign Out", tintColor: .red)
-                }
-            }
-            
         }
     }
 }

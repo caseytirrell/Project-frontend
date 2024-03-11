@@ -14,11 +14,20 @@ struct HomePageView: View {
             Color.white.edgesIgnoringSafeArea(/*@START_MENU_TOKEN@*/.all/*@END_MENU_TOKEN@*/)
             
             VStack(spacing: 15) {
-                if let userEmail = authViewModel.email {
-                    Text("Logged in as \(userEmail)")
-                        .font(.custom("Inter Regular", size: 12))
-                        .padding(.top, 20)
+                NavigationLink{
+                    ProfileView()
+                        .navigationBarBackButtonHidden(true)
+                } label: {
+                    HStack(spacing: 2){
+                        if let userEmail = authViewModel.email {
+                            Text("Logged in as \(userEmail)")
+                                .font(.custom("Inter Regular", size: 12))
+                                .padding(.top, 20)
+                        }
+                    }
+                    .font(.system(size: 14))
                 }
+                
                 
                 Image("golf_logo")
                     .resizable()
@@ -75,19 +84,24 @@ struct HomePageView: View {
                             .cornerRadius(8)
                             .frame(width: 200, height: 30)
                     }
-                    
-                    Button(action: {
-                        authViewModel.signOut()
-                    }) {
-                        
-                        Text("Logout")
-                            .font(.custom("Inter Regular", size: 20))
-                            .foregroundColor(.black)
-                            .padding()
-                            .background(Color.red)
-                            .cornerRadius(8)
-                            .frame(width: 200, height: 30)
+                    NavigationLink{
+                        ProfileView()
+                            .navigationBarBackButtonHidden(true)
+                    } label: {
+                        HStack(spacing: 2){
+                            Text("Profile")
+                                .font(.custom("Inter Regular", size: 20))
+                                .foregroundColor(.black)
+                                .padding()
+                                .background(Color.red)
+                                .cornerRadius(8)
+                                .frame(width: 200, height: 30)
+                        }
+                        .font(.system(size: 14))
                     }
+   
+                    
+
                 }
                 .padding()
             }
