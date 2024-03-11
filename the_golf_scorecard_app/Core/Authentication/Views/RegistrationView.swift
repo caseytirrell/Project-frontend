@@ -35,9 +35,92 @@ struct RegistrationView: View {
     @State private var confirmPassword = ""
     @State private var showConfirmPassword = false
     @State private var passwordMatch = true
+    @State private var firstNameErrors: [String] = []
+    @State private var lastNameErrors: [String] = []
+    @State private var emailErrors: [String] = []
+    @State private var passwordErrors: [String] = []
+    @State private var phoneNumberErrors: [String] = []
+    @State private var zipCodeErrors: [String] = []
+    @State private var stateErrors: [String] = []
 
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var viewModel: AuthViewModel
+    
+    enum ValidationType {
+        case nonEmpty
+        case email
+    }
+    
+    func validateText(text: String, validationType: ValidationType) -> [String] {
+        
+        var errors: [String] = []
+        
+        switch validationType {
+        case .nonEmpty:
+            if text.isEmpty {
+                errors.append("This Field must be filled in.")
+            }
+        case .email:
+            if !text.contains("@") || !text.contains(".") {
+                errors.append("Please enter a valid email address")
+            }
+        }
+        return errors
+    }
+    
+    func validatePassword(password: String) -> [String] {
+        
+        var errors: [String] = []
+        if !password.contains(where: { $0.isLowercase }) {
+            errors.append("Password must contain atleast 1 lowercase letter.")
+        }
+        if !password.contains(where: { $0.isUppercase}) {
+            errors.append("Password must contain atelast 1 upper case letter.")
+        }
+        if !password.contains(where: { $0.isNumber}) {
+            errors.append("Password must contain atleast 1 number.")
+        }
+        if !password.contains(where: { !$0.isLetter && !$0.isNumber}) {
+            errors.append("Password must contain 1 non-alphanumeric character.")
+        }
+        if password.count < 6 {
+            errors.append("Password must be atleast 6 characters long.")
+        }
+        if password.count > 4096 {
+            errors.append("Password length is too long.")
+        }
+        return errors
+    }
+    
+    func validatePhoneNumber(phoneNumber: String) -> [String] {
+        
+        var errors: [String] = []
+        let digits = phoneNumber.filter { $0.isNumber }
+        if digits.count != 10 {
+            errors.append("Phone number must be exactly 10 digits(no hyphens).")
+        }
+        return errors
+    }
+    
+    func validateZipcode(zipCode: String) -> [String] {
+        
+        var errors: [String] = []
+        let digits = zipCode.filter { $0.isNumber }
+        if digits.count != 5 {
+            errors.append("Zip code must be exactly 5 digits.")
+        }
+        return errors
+    }
+    
+    func validateState(state: String) -> [String] {
+        
+        var errors: [String] = []
+        let letters = state.filter { $0.isLetter }
+        if letters.count != 2 {
+            errors.append("State Field must be exactly 2 characters.")
+        }
+        return errors
+    }
     
     var body: some View {
         VStack{
@@ -51,16 +134,56 @@ struct RegistrationView: View {
             ScrollView {
                 VStack(spacing: 24) {
                     InputView(text: $firstName, title: "First Name", placeholder: "First Name", showError: showFirstName)
+                    if !firstNameErrors.isEmpty {
+                        ForEach(firstNameErrors, id :\.self) { error in
+                            Text(error)
+                                .foregroundColor(.red)
+                                .font(.caption)
+                        }
+                    }
 
                     InputView(text: $lastName, title: "Last Name", placeholder: "Last Name", showError: showLastName)
+                    if !lastNameErrors.isEmpty {
+                        ForEach(lastNameErrors, id :\.self) { error in
+                            Text(error)
+                                .foregroundColor(.red)
+                                .font(.caption)
+                        }
+                    }
                     
                     InputView(text: $email, title: "Email Address ", placeholder: "yourname@example.com",  showError: showEmail)
+                    if !emailErrors.isEmpty {
+                        ForEach(emailErrors, id: \.self) { error in
+                            Text(error)
+                                .foregroundColor(.red)
+                                .font(.caption)
+                        }
+                    }
                     InputView(text: $password, title: "Password", placeholder: "Enter a password", isSecureFiled: true, showError: showPassword, validationIcon: password == confirmPassword && !password.isEmpty ? Image(systemName: "checkmark.circle.fill") : nil)
+                    if !passwordErrors.isEmpty {
+                        
+                        ForEach(passwordErrors, id: \.self) { error in
+                            Text(error)
+                                .foregroundColor(.red)
+                                .font(.caption)}
+                    }
                     
                     InputView(text: $confirmPassword, title: "Confirm Password", placeholder: "Confirm your Password", isSecureFiled: true, showError: showConfirmPassword, validationIcon: password == confirmPassword && !password.isEmpty ? Image(systemName: "checkmark.circle.fill") : nil)
+                    if !passwordMatch {
+                        
+                        Text("Passwords dont match...")
+                            .foregroundColor(.red)
+                    }
                     
                     InputView(text: $phoneNumber, title: "Phone Number ", placeholder: "123 469 7890", showError: showPhoneNumber)
-                    
+                    if !phoneNumberErrors.isEmpty {
+                        
+                        ForEach(phoneNumberErrors, id: \.self) { error in
+                            Text(error)
+                                .foregroundColor(.red)
+                                .font(.caption)
+                        }
+                    }
                     DatePicker(
                         "Birthday",
                         selection: $birthday,
@@ -77,12 +200,23 @@ struct RegistrationView: View {
                     InputView(text: $city, title: "City ", placeholder: "New York City", showError: showCity)
 
                     InputView(text: $state, title: "State", placeholder: "NY", showError: showState)
-                    InputView(text: $zipCode, title: "Zip Code", placeholder: "07285", showError: showZip)
-                    
-                    if !passwordMatch {
+                    if !stateErrors.isEmpty {
                         
-                        Text("Passwords dont match...")
-                            .foregroundColor(.red)
+                        ForEach(stateErrors, id: \.self) { error in
+                            Text(error)
+                                .foregroundColor(.red)
+                                .font(.caption)
+                        }
+                    }
+                    
+                    InputView(text: $zipCode, title: "Zip Code", placeholder: "07285", showError: showZip)
+                    if !zipCodeErrors.isEmpty {
+                        
+                        ForEach(zipCodeErrors, id: \.self) { error in
+                            Text(error)
+                                .foregroundColor(.red)
+                                .font(.caption)
+                        }
                     }
                     
                     Text("Select profile image")
@@ -113,20 +247,29 @@ struct RegistrationView: View {
             }
             .frame(height: UIScreen.main.bounds.height - 450)            // log in button
             Button {
+                firstNameErrors = validateText(text: firstName, validationType: .nonEmpty)
                 showFirstName = firstName.isEmpty
+                lastNameErrors = validateText(text: lastName, validationType: .nonEmpty)
                 showLastName = lastName.isEmpty
+                emailErrors = validateText(text: email, validationType: .email)
                 showEmail = email.isEmpty
-                showPassword = email.isEmpty
+                passwordErrors = validatePassword(password: password)
+                showPassword = email.isEmpty || !passwordErrors.isEmpty
                 showConfirmPassword = confirmPassword.isEmpty
                 passwordMatch = (password == confirmPassword)
-                showPhoneNumber = phoneNumber.isEmpty || phoneNumber.count != 10
+                phoneNumberErrors = validatePhoneNumber(phoneNumber: phoneNumber)
+                showPhoneNumber = phoneNumber.isEmpty
                 showAddress1 = address1.isEmpty
                 showCity = city.isEmpty
-                showState = state.isEmpty || state.count != 2
-                showZip = zipCode.isEmpty || zipCode.count != 5
+                stateErrors = validateState(state: state)
+                showState = state.isEmpty
+                zipCodeErrors = validateZipcode(zipCode: zipCode)
+                showZip = zipCode.isEmpty
                 
                 
-                guard !showFirstName && !showLastName && !showEmail && !showPassword && !showConfirmPassword && passwordMatch && !showPhoneNumber && !showDOB && !showAddress1 && !showCity && !showState && !showZip else {return}
+                guard firstNameErrors.isEmpty, lastNameErrors.isEmpty, emailErrors.isEmpty, passwordErrors.isEmpty, phoneNumberErrors.isEmpty, zipCodeErrors.isEmpty, stateErrors.isEmpty, !showFirstName, !showLastName, !showEmail, !showPassword, !showConfirmPassword, passwordMatch, !showPhoneNumber, !showAddress1, !showCity, !showState, !showZip else {
+                        return
+                    }
                 
                 
                 Task {

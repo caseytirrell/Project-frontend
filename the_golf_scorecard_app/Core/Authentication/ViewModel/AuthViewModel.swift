@@ -38,6 +38,7 @@ class AuthViewModel: ObservableObject {
                 self.userSession = result.user
                 self.email = result.user.email
                 self.isAuthenticated = true
+                self.errorMessage = nil
             }
             try await getUserProfile()
             
@@ -48,7 +49,7 @@ class AuthViewModel: ObservableObject {
         }
         catch {
             DispatchQueue.main.async {
-                self.errorMessage = error.localizedDescription
+                self.errorMessage = "Invalid email or password. Please try again."
             }
         }
         
