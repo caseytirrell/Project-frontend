@@ -39,6 +39,7 @@ class AuthViewModel: ObservableObject {
         catch {
             DispatchQueue.main.async {
                 self.errorMessage = error.localizedDescription
+                print("Error logging in user: \(error.localizedDescription)")
             }
         }
         
