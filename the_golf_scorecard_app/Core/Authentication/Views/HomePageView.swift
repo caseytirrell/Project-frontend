@@ -13,34 +13,30 @@ struct HomePageView: View {
         ZStack {
             Color.white.edgesIgnoringSafeArea(/*@START_MENU_TOKEN@*/.all/*@END_MENU_TOKEN@*/)
             
-            VStack(spacing: 15) {
-                if let userEmail = authViewModel.email {
-                    Text("Logged in as \(userEmail)")
-                        .font(.custom("Inter Regular", size: 12))
-                        .padding(.top, 20)
-                }
+            VStack(spacing: 12) {
                 
                 Image("golf_logo")
                     .resizable()
                     .scaledToFill()
                     .frame(width: 100, height: 120)
-                    .padding(.top, 20)
+                    .padding(.top, 10)
                     .padding(.horizontal, 100)
                 
                 Text("Welcome to")
-                    .font(.custom("Inter Regular", size: 40))
+                    .font(.custom("Inter Regular", size: 38))
                     .fixedSize(horizontal: false, vertical: true)
                 
                 Text("The Golf Scorecard!")
-                    .font(.custom("Inter Regular", size: 40))
+                    .font(.custom("Inter Regular", size: 38))
                     .fixedSize(horizontal: false, vertical: true)
-                    .padding(.bottom, 15)
+                    .padding(.bottom, 10)
                 
                 
                 Button("Courses") {
                     
                 }
                 .buttonStyle(PrimaryButtonStyle())
+                
                 Button("Register") {
                     
                 }
@@ -62,7 +58,7 @@ struct HomePageView: View {
                 }
                 .buttonStyle(PrimaryButtonStyle())
                 
-                HStack(spacing: 10) {
+                HStack(spacing: 8) {
                     
                     Button(action: {
                         
@@ -76,24 +72,37 @@ struct HomePageView: View {
                             .frame(width: 200, height: 30)
                     }
                     
-                    Button(action: {
-                        authViewModel.signOut()
-                    }) {
-                        
-                        Text("Logout")
-                            .font(.custom("Inter Regular", size: 20))
-                            .foregroundColor(.black)
-                            .padding()
-                            .background(Color.red)
-                            .cornerRadius(8)
-                            .frame(width: 200, height: 30)
-                    }
                 }
                 .padding()
             }
             .padding()
             //.navigationBarTitle("Home", displayMode: .large)
         }
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                if let userEmail = authViewModel.email {
+                    Text("Logged in as \(userEmail)")
+                        .font(.custom("Inter Regular", size: 12))
+                        .foregroundColor(.black) // Adjust the color as needed
+                }
+            }
+            
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: {
+                    authViewModel.signOut()
+                }) {
+                    VStack(spacing: 2) {
+                        Image(systemName: "arrow.uturn.backward")
+                            .font(.body)
+                            .foregroundColor(.black)
+                        Text("Logout")
+                            .font(.caption2)
+                            .foregroundColor(.black)
+                    }
+                }
+            }
+        }
+        .navigationBarTitleDisplayMode(.large)
     }
 }
 

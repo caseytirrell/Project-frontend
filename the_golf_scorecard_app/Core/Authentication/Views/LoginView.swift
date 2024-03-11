@@ -35,61 +35,74 @@ struct LoginView: View {
         NavigationStack{
             VStack {
                 // TODO add logo later
-                                Image("golf_logo")
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 100, height: 120)
-                                    .padding(.vertical, 32)
                                 
-                                // log in fields
-                                VStack(spacing: 24) {
-                                    InputView(text: $email, title: "Email Address", placeholder: "yourname@example.com", showError: showEmail)
-                                        .autocapitalization(.none)
-                                    if !emailErrors.isEmpty {
-                                        ForEach(emailErrors, id: \.self) {
-                                            error in
-                                            Text(error)
-                                                .foregroundColor(.red)
-                                                .font(.caption)
-                                        }
-                                    }
-                                    
-                                    InputView(text: $password, title: "Password", placeholder: "Enter Password", isSecureFiled: true, showError: showPassword)
-                                    if !passwordErrors.isEmpty {
-                                        ForEach(passwordErrors, id: \.self) {
-                                            error in
-                                            Text(error)
-                                                .foregroundColor(.red)
-                                                .font(.caption)
-                                        }
-                                    }
-                                }
-                                .padding(.all, 24)
-                                // log in button
-                                Button {
-                                    
-                                    showEmail = email.isEmpty
-                                    showPassword = password.isEmpty
-                                    emailErrors = validateText(text: email, validationType: .email)
-                                    passwordErrors = validateText(text: password, validationType: .nonEmpty)
-                                    
-                                    guard emailErrors.isEmpty, passwordErrors.isEmpty, !showEmail, !showPassword else { return }
-                                    
-                                    Task {
-                                        try await viewModel.logIn(withEmail: email, password: password)
-                                    }
-                                } label: {
-                                    HStack {
-                                        Text("LOG IN")
-                                            .fontWeight(.semibold)
-                                        Image("arrow.right")
-                                    }
-                                    .foregroundColor(.white)
-                                    .frame(width: UIScreen.main.bounds.width - 32,height: 48)
-                                }
-                                .background(Color(.systemBlue  ))
-                                .cornerRadius(10)
+                Image("golf_logo")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 100, height: 120)
+                    .padding(.vertical, 32)
                 
+                // log in fields
+                VStack(spacing: 24) {
+                                    
+                    InputView(text: $email, title: "Email Address", placeholder: "yourname@example.com", showError: showEmail)
+                        .autocapitalization(.none)
+                    if !emailErrors.isEmpty {
+                                        
+                        ForEach(emailErrors, id: \.self) {
+                            error in
+                            Text(error)
+                                .foregroundColor(.red)
+                                .font(.caption)
+                            
+                        }
+                    }
+                                    
+                    InputView(text: $password, title: "Password", placeholder: "Enter Password", isSecureFiled: true, showError: showPassword)
+                    if !passwordErrors.isEmpty {
+                        ForEach(passwordErrors, id: \.self) {
+                            error in
+                            Text(error)
+                                .foregroundColor(.red)
+                                .font(.caption)
+                        }
+                    }
+                }
+                .padding(.all, 24)
+                
+                if let errorMessage = viewModel.errorMessage {
+                    Text(errorMessage)
+                        .foregroundColor(.red)
+                        .padding()
+                }
+                // log in button
+                Button {
+                    
+                    viewModel.errorMessage = nil
+                    showEmail = email.isEmpty
+                    showPassword = password.isEmpty
+                    emailErrors = validateText(text: email, validationType: .email)
+                    passwordErrors = validateText(text: password, validationType: .nonEmpty)
+                    
+                    guard emailErrors.isEmpty, passwordErrors.isEmpty, !showEmail, !showPassword else { return }
+                    
+                    Task {
+                        try await viewModel.logIn(withEmail: email, password: password)
+                    }
+                    
+                } label: {
+                    HStack {
+                        
+                        Text("LOG IN")
+                            .fontWeight(.semibold)
+                        
+                        Image("arrow.right")
+                    }
+                    .foregroundColor(.white)
+                    .frame(width: UIScreen.main.bounds.width - 32,height: 48)
+                }
+                .background(Color(.systemBlue  ))
+                .cornerRadius(10)
                 
                 Spacer()
                 

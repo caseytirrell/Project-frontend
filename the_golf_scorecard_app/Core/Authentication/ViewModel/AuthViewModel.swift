@@ -33,13 +33,13 @@ class AuthViewModel: ObservableObject {
                 self.userSession = result.user
                 self.email = result.user.email
                 self.isAuthenticated = true
+                self.errorMessage = nil
             }
             print(result.user.uid)
         }
         catch {
             DispatchQueue.main.async {
-                self.errorMessage = error.localizedDescription
-                print("Error logging in user: \(error.localizedDescription)")
+                self.errorMessage = "Invalid email or password. Please try again."
             }
         }
         
