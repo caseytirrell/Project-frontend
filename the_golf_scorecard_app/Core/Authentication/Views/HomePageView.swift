@@ -75,7 +75,6 @@ struct HomePageView: View {
                     }
                     NavigationLink{
                         ProfileView()
-                            .navigationBarBackButtonHidden(false)
                     } label: {
                         HStack(spacing: 2){
                             Text("Profile")
