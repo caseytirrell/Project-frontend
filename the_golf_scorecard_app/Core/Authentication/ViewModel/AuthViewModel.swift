@@ -22,8 +22,8 @@ class AuthViewModel: ObservableObject {
     init() {
             self.userSession = Auth.auth().currentUser
         Task {
-            try await getUserProfile()
-            try await getUserProfilePicture()
+            //try await getUserProfile()
+            //try await getUserProfilePicture()
         }
     }
     
@@ -192,18 +192,27 @@ class AuthViewModel: ObservableObject {
     }
     
     func getUserProfile() async throws {
-        guard let user = Auth.auth().currentUser else { return }
-        let userToken = try? await user.getIDTokenResult(forcingRefresh: true)
-        let endpoint = "api/v1/users/user?user_id=\(self.userSession!.uid)"
-        let url = URL(string: self.endpointString(endpoint: endpoint))!
-        var urlRequest = URLRequest(url: url)
-        urlRequest.setValue("Bearer " + (userToken!.token), forHTTPHeaderField: "authorization")
-        urlRequest.httpMethod = "GET"
-        let (data, _) = try await URLSession.shared.data(for: urlRequest)
-        let profile = try! JSONDecoder().decode(User.self, from: data)
-        print(profile)
-        self.currentUser = profile
-
+        do {
+            guard let user = Auth.auth().currentUser else { return }
+            let userToken = try? await user.getIDTokenResult(forcingRefresh: true)
+            let endpoint = "api/v1/users/user?user_id=\(self.userSession!.uid)"
+            let url = URL(string: self.endpointString(endpoint: endpoint))!
+            var urlRequest = URLRequest(url: url)
+            urlRequest.setValue("Bearer " + (userToken!.token), forHTTPHeaderField: "authorization")
+            urlRequest.httpMethod = "GET"
+            let (data, _) = try await URLSession.shared.data(for: urlRequest)
+            print(String(data: data, encoding: .utf8)!)
+            let profile = try JSONDecoder().decode(User.self, from: data)
+            print(profile)
+            self.currentUser = profile
+        }
+        catch let error {
+            DispatchQueue.main.async {
+                print("Error Fetching User Profile...")
+                self.errorMessage = error.localizedDescription
+                print(self.errorMessage!)
+            }
+        }
     }
     
     func getUserProfilePicture() async throws {

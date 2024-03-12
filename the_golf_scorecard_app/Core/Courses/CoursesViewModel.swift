@@ -8,10 +8,12 @@
 import Foundation
 import Firebase
 import FirebaseAuth
+import UIKit
 
 class CoursesViewModel: ObservableObject {
     @Published var courses: [Course] = []
     @Published var userSession: FirebaseAuth.User?
+    @Published var courseImage: UIImage?
     let boundary: String = "Boundry-\(UUID().uuidString)"
     
     func endpointString(endpoint: String) -> String {
@@ -42,6 +44,18 @@ class CoursesViewModel: ObservableObject {
             print(error)
             throw error
         }
+    }
+    
+    func loadCourseImage() async throws {
+        guard let user = Auth.auth().currentUser else { return }
+        let userToken = try? await user.getIDTokenResult(forcingRefresh: true)
+        let url = URL(string: self.endpointString(endpoint: "api/v1/users/profile_picture"))!
+        var urlRequest = URLRequest(url: url)
+        urlRequest.setValue("Bearer " + (userToken!.token), forHTTPHeaderField: "authorization")
+        urlRequest.httpMethod = "GET"
+        let (data, _) = try await URLSession.shared.data(for: urlRequest)
+        courseImage = UIImage(data: data)
+    
     }
 }
 

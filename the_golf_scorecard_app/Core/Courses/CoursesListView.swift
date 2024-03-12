@@ -28,7 +28,7 @@ struct CoursesListView: View {
                     .padding(.bottom, 10)
                 NavigationView {
                     List(viewModel.courses) { course in
-                        CourseRow(course: course)
+                        CourseRow(course: course, viewModel: viewModel)
                     }
                     .listStyle(PlainListStyle())
                     .onAppear {
@@ -44,22 +44,26 @@ struct CoursesListView: View {
             }
         }
     }
-    fileprivate struct CourseRow: View {
-        
+    struct CourseRow: View {
         let course: Course
+        @State private var image: UIImage? = nil
+        @ObservedObject var viewModel: CoursesViewModel
+        @State private var isLoading = false
+        @State private var loadingError: Error? = nil
         
         var body: some View {
             HStack {
-                
-                Image(systemName: "photo")
+                Image(uiImage: viewModel.courseImage ?? UIImage(resource: .golfLogo))
                     .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 100, height: 100)
-                    .cornerRadius(8)
+                    .scaledToFill()
+                    .fontWeight(.semibold)
+                    .frame(width: 72, height: 72)
+                    .background(Color(.systemGray))
+                    .clipShape(Circle())
                 VStack(alignment: .leading, spacing: 5) {
                     Text(course.courseName)
                         .font(.headline)
-                    if let description = course.desc, !description.isEmpty {
+                    if let description = course.desc {
                         Text(description)
                             .font(.subheadline)
                             .foregroundColor(.secondary)
@@ -68,11 +72,9 @@ struct CoursesListView: View {
                     Text("\(course.address1), \(course.city), \(course.state) \(course.zipCode)")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
-                    Text("ID: \(course.id)")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
                 }
                 .padding(.leading, 8)
+                
                 Spacer()
             }
             .frame(maxWidth: .infinity, alignment: .leading)
